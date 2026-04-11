@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Health Risk Prediction System — Predict your health risk using AI and get personalised lifestyle insights." />
+  <title>{% block title %}Health Risk Prediction System{% endblock %}</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Global stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  <!-- Feather Icons (lightweight SVG icons) -->
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js" defer></script>
+
+  {% block head %}{% endblock %}
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ── Topbar ───────────────────────────────────── -->
+  <nav class="topbar" role="navigation" aria-label="Primary navigation">
+    <a href="{{ url_for('welcome') }}" class="topbar__brand" id="nav-brand">
+      <span class="topbar__brand-dot"></span>
+      <span class="topbar__brand-text">Health Risk Prediction System</span>
+    </a>
+    <div class="topbar__actions">
+      <a href="{{ url_for('form_page') }}" class="topbar__link" id="nav-assessment">New Assessment</a>
+      <a href="{{ url_for('reset') }}"     class="topbar__link" id="nav-reset">Reset</a>
+    </div>
+  </nav>
+
+  <!-- ── Page content ─────────────────────────────── -->
+  {% block content %}{% endblock %}
+
+  <!-- ── Footer ───────────────────────────────────── -->
+  <footer class="footer">
+    &copy; 2025 Health Risk Prediction System &mdash; For educational and informational purposes only. Not a substitute for professional medical advice.
+  </footer>
+
+</div>
+
+<!-- Feather Icons init -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    if (typeof feather !== 'undefined') feather.replace();
+  });
+</script>
+
+{% block scripts %}{% endblock %}
+</body>
+</html>

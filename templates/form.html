@@ -1,0 +1,289 @@
+{% extends "base.html" %}
+{% block title %}Health Assessment Form — Health Risk Prediction System{% endblock %}
+
+{% block content %}
+<main class="form-page">
+
+  <!-- ── Header ────────────────────────────────────── -->
+  <div class="form-page__header animate-up">
+    <span class="section-label">Step 1 of 1</span>
+    <h1 class="form-page__title">Health Assessment Form</h1>
+    <p class="form-page__sub">
+      Please fill in all fields accurately. Your information is used solely
+      for generating your personalised health risk report.
+    </p>
+  </div>
+
+  <!-- ── Error banner ──────────────────────────────── -->
+  {% if errors %}
+  <div class="error-banner animate-up" role="alert" id="form-errors">
+    <span class="error-banner__icon">
+      <i data-feather="alert-circle" style="width:18px;height:18px;"></i>
+    </span>
+    <div>
+      <div class="error-banner__title">Please correct the following issues:</div>
+      <ul class="error-banner__list">
+        {% for err in errors %}
+        <li>{{ err }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- ── Form card ─────────────────────────────────── -->
+  <form method="POST" action="{{ url_for('predict') }}" novalidate
+        class="form-card animate-up animate-up-1" id="health-form">
+
+    <!-- ① Personal identification -->
+    <div class="form-section">
+      <div class="form-section__title">Personal Identification</div>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label" for="first_name">
+            First Name<sup>*</sup>
+          </label>
+          <input class="form-input"
+                 type="text"
+                 id="first_name"
+                 name="first_name"
+                 placeholder="e.g. Sarah"
+                 value="{{ form_data.first_name if form_data else '' }}"
+                 autocomplete="given-name"
+                 required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="last_name">
+            Last Name<sup>*</sup>
+          </label>
+          <input class="form-input"
+                 type="text"
+                 id="last_name"
+                 name="last_name"
+                 placeholder="e.g. Mitchell"
+                 value="{{ form_data.last_name if form_data else '' }}"
+                 autocomplete="family-name"
+                 required />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ② Physical metrics -->
+    <div class="form-section">
+      <div class="form-section__title">Physical Metrics</div>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label" for="age">Age<sup>*</sup></label>
+          <input class="form-input"
+                 type="number"
+                 id="age"
+                 name="age"
+                 min="18" max="120"
+                 placeholder="e.g. 35"
+                 value="{{ form_data.age if form_data else '' }}"
+                 required />
+          <span class="form-hint">18 – 120 years</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="weight">Weight<sup>*</sup></label>
+          <input class="form-input"
+                 type="number"
+                 id="weight"
+                 name="weight"
+                 min="20" max="300"
+                 step="0.1"
+                 placeholder="e.g. 72"
+                 value="{{ form_data.weight if form_data else '' }}"
+                 required />
+          <span class="form-hint">Kilograms (20 – 300 kg)</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="height">Height<sup>*</sup></label>
+          <input class="form-input"
+                 type="number"
+                 id="height"
+                 name="height"
+                 min="50" max="250"
+                 step="0.1"
+                 placeholder="e.g. 170"
+                 value="{{ form_data.height if form_data else '' }}"
+                 required />
+          <span class="form-hint">Centimetres (50 – 250 cm)</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Calculated BMI</label>
+          <div class="form-bmi-preview" id="bmi-preview" aria-live="polite">
+            — Enter weight &amp; height above
+          </div>
+          <span class="form-hint">Auto-calculated from your measurements</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ③ Lifestyle factors -->
+    <div class="form-section">
+      <div class="form-section__title">Lifestyle Factors</div>
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label class="form-label" for="sleep">Daily Sleep<sup>*</sup></label>
+          <input class="form-input"
+                 type="number"
+                 id="sleep"
+                 name="sleep"
+                 min="0" max="24"
+                 step="0.1"
+                 placeholder="e.g. 7.5"
+                 value="{{ form_data.sleep if form_data else '' }}"
+                 required />
+          <span class="form-hint">Hours per night (0 – 24)</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="exercise">Exercise Level<sup>*</sup></label>
+          <select class="form-select" id="exercise" name="exercise" required>
+            <option value="" disabled {% if not form_data %}selected{% endif %}>
+              Select level…
+            </option>
+            {% for level in exercise_levels %}
+            <option value="{{ level }}"
+              {% if form_data and form_data.exercise == level %}selected{% endif %}>
+              {{ level | capitalize }}
+            </option>
+            {% endfor %}
+          </select>
+          <span class="form-hint">Your typical weekly activity level</span>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="profession">Profession<sup>*</sup></label>
+          <select class="form-select" id="profession" name="profession" required>
+            <option value="" disabled {% if not form_data %}selected{% endif %}>
+              Select profession…
+            </option>
+            {% for prof in professions %}
+            <option value="{{ prof }}"
+              {% if form_data and form_data.profession == prof %}selected{% endif %}>
+              {{ prof | replace('_', ' ') | title }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ④ Health behaviours -->
+    <div class="form-section">
+      <div class="form-section__title">Health Behaviours</div>
+
+      <div class="form-grid">
+
+        <!-- Smoking -->
+        <div class="form-group">
+          <label class="form-label">Do you smoke?<sup>*</sup></label>
+          <div class="radio-group" role="radiogroup" aria-label="Smoking status">
+            <input type="radio" class="radio-option" name="smoking" id="smoking-yes"
+                   value="yes" {% if form_data and form_data.smoking == 'yes' %}checked{% endif %} />
+            <label class="radio-label" for="smoking-yes">Yes</label>
+
+            <input type="radio" class="radio-option" name="smoking" id="smoking-no"
+                   value="no" {% if form_data and form_data.smoking == 'no' %}checked{% endif %} />
+            <label class="radio-label" for="smoking-no">No</label>
+          </div>
+        </div>
+
+        <!-- Alcohol -->
+        <div class="form-group">
+          <label class="form-label">Do you consume alcohol?<sup>*</sup></label>
+          <div class="radio-group" role="radiogroup" aria-label="Alcohol consumption">
+            <input type="radio" class="radio-option" name="alcohol" id="alcohol-yes"
+                   value="yes" {% if form_data and form_data.alcohol == 'yes' %}checked{% endif %} />
+            <label class="radio-label" for="alcohol-yes">Yes</label>
+
+            <input type="radio" class="radio-option" name="alcohol" id="alcohol-no"
+                   value="no" {% if form_data and form_data.alcohol == 'no' %}checked{% endif %} />
+            <label class="radio-label" for="alcohol-no">No</label>
+          </div>
+        </div>
+
+        <!-- Married -->
+        <div class="form-group">
+          <label class="form-label">Marital Status<sup>*</sup></label>
+          <div class="radio-group" role="radiogroup" aria-label="Marital status">
+            <input type="radio" class="radio-option" name="married" id="married-yes"
+                   value="yes" {% if form_data and form_data.married == 'yes' %}checked{% endif %} />
+            <label class="radio-label" for="married-yes">Married</label>
+
+            <input type="radio" class="radio-option" name="married" id="married-no"
+                   value="no" {% if form_data and form_data.married == 'no' %}checked{% endif %} />
+            <label class="radio-label" for="married-no">Not Married</label>
+          </div>
+          <span class="form-hint">Used for model accuracy — no suggestions made on this factor</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Footer / Actions ────────────────────────── -->
+    <div class="form-footer">
+      <a href="{{ url_for('welcome') }}" class="btn-secondary" id="btn-back">
+        <i data-feather="arrow-left" style="width:15px;height:15px;"></i>
+        Back
+      </a>
+      <button type="submit" class="btn-primary" id="btn-submit">
+        <i data-feather="activity" style="width:15px;height:15px;"></i>
+        Generate Risk Report
+      </button>
+    </div>
+
+  </form>
+
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  /* ── Live BMI calculator ─────────────────────────── */
+  const weightInput  = document.getElementById('weight');
+  const heightInput  = document.getElementById('height');
+  const bmiPreview   = document.getElementById('bmi-preview');
+
+  function calcBMI() {
+    const w = parseFloat(weightInput.value);
+    const h = parseFloat(heightInput.value);
+    if (w > 0 && h > 0) {
+      const bmi = w / Math.pow(h / 100, 2);
+      let category = '';
+      if (bmi < 18.5)      category = 'Underweight';
+      else if (bmi < 25)   category = 'Normal weight';
+      else if (bmi < 30)   category = 'Overweight';
+      else                 category = 'Obese';
+      bmiPreview.textContent = bmi.toFixed(1) + '  —  ' + category;
+      bmiPreview.style.color = bmi >= 25 ? '#E67E22' : 'var(--c-dark)';
+    } else {
+      bmiPreview.textContent = '— Enter weight & height above';
+      bmiPreview.style.color = '';
+    }
+  }
+
+  weightInput.addEventListener('input', calcBMI);
+  heightInput.addEventListener('input', calcBMI);
+  calcBMI(); // run on page load (for pre-filled forms)
+
+  /* ── Basic client-side validation ─────────────────── */
+  document.getElementById('health-form').addEventListener('submit', function (e) {
+    const btn = document.getElementById('btn-submit');
+    btn.textContent = 'Analysing…';
+    btn.disabled = true;
+  });
+</script>
+{% endblock %}
