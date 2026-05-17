@@ -2530,6 +2530,23 @@ a {
   .gmail-grid { grid-template-columns: 1fr; }
   .gmail-demo-card { grid-column: span 1; }
   .settings-grid { grid-template-columns: 1fr; }
+  
+  /* Settings Mobile fixes */
+  .settings-card--pipeline {
+    grid-column: span 1 !important;
+  }
+  
+  .pipeline-visual {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    margin-top: 1rem !important;
+  }
+  
+  .pipeline-visual__arrow {
+    transform: rotate(90deg) !important;
+    margin: 0.25rem 0 !important;
+  }
+  
   .analyze-form__row { grid-template-columns: 1fr; }
   .verdict-banner { flex-direction: column; gap: 1.5rem; text-align: center; }
   .verdict-banner__left { flex-direction: column; }

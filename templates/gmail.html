@@ -307,46 +307,43 @@
           </div>
           {% endfor %}
         {% endif %}
-      </div>
-    </div>
-    {% endif %}
-  </div>
-
-  <!-- Premium Email Threat Details Modal Popup -->
-  <div id="email-modal" class="modal-overlay" onclick="if(event.target === this) closeModal();">
-    <div class="modal-card">
-      <div class="modal-card__header">
-        <h3 id="modal-subject">Email Analysis Details</h3>
-        <button onclick="closeModal()" class="modal-close" title="Close modal">&times;</button>
-      </div>
-      <div class="modal-card__body">
-        <div class="modal-meta-row">
-          <div class="modal-meta-item">
-            <strong>From:</strong> <span id="modal-sender"></span>
-          </div>
-          <div class="modal-meta-item">
-            <strong>Threat Level:</strong> 
-            <span id="modal-badge" class="demo-email-row__badge"></span>
-          </div>
-        </div>
-        <div class="modal-snippet-box">
-          <strong style="font-family:'Outfit',sans-serif; color:var(--c-navy); font-size:0.9rem; display:block; margin-bottom:0.5rem;">
-            Analyzed Content
-          </strong>
-          <p id="modal-body" style="white-space: pre-wrap; font-family: inherit; font-size: 0.85rem; line-height: 1.6; color: var(--c-navy); margin: 0;"></p>
-        </div>
-      </div>
-      <div class="modal-card__footer">
-        <a id="modal-gmail-link" href="#" target="_blank" class="btn-primary" style="background:#FF6632; border-color:#FF6632; color:#fff; display:inline-flex; align-items:center; gap:0.5rem; font-weight:700; text-decoration:none; padding:0.5rem 1rem; border-radius:var(--radius-sm); font-size:0.85rem; transition:transform 0.2s;">
-          <i data-feather="external-link" style="width:14px;height:14px;"></i> Open in Gmail
-        </a>
-        <button onclick="closeModal()" class="btn-secondary" style="border-radius:var(--radius-sm); font-weight:700; padding:0.5rem 1rem; font-size:0.85rem; cursor:pointer;">
-          Close
-        </button>
-      </div>
-    </div>
   </div>
 </main>
+
+<!-- Premium Email Threat Details Modal Popup -->
+<div id="email-modal" class="modal-overlay" onclick="if(event.target === this) closeModal();">
+  <div class="modal-card">
+    <div class="modal-card__header">
+      <h3 id="modal-subject">Email Analysis Details</h3>
+      <button onclick="closeModal()" class="modal-close" title="Close modal">&times;</button>
+    </div>
+    <div class="modal-card__body">
+      <div class="modal-meta-row">
+        <div class="modal-meta-item">
+          <strong>From:</strong> <span id="modal-sender"></span>
+        </div>
+        <div class="modal-meta-item">
+          <strong>Threat Level:</strong> 
+          <span id="modal-badge" class="demo-email-row__badge"></span>
+        </div>
+      </div>
+      <div class="modal-snippet-box">
+        <strong style="font-family:'Outfit',sans-serif; color:var(--c-navy); font-size:0.9rem; display:block; margin-bottom:0.5rem;">
+          Analyzed Content
+        </strong>
+        <p id="modal-body" style="white-space: pre-wrap; font-family: inherit; font-size: 0.85rem; line-height: 1.6; color: var(--c-navy); margin: 0;"></p>
+      </div>
+    </div>
+    <div class="modal-card__footer">
+      <a id="modal-gmail-link" href="#" target="_blank" class="btn-primary" style="background:#FF6632; border-color:#FF6632; color:#fff; display:inline-flex; align-items:center; gap:0.5rem; font-weight:700; text-decoration:none; padding:0.5rem 1rem; border-radius:var(--radius-sm); font-size:0.85rem; transition:transform 0.2s;">
+        <i data-feather="external-link" style="width:14px;height:14px;"></i> Open in Gmail
+      </a>
+      <button onclick="closeModal()" class="btn-secondary" style="border-radius:var(--radius-sm); font-weight:700; padding:0.5rem 1rem; font-size:0.85rem; cursor:pointer;">
+        Close
+      </button>
+    </div>
+  </div>
+</div>
 {% endblock %}
 {% block scripts %}
 <script>
