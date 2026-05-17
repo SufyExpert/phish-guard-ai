@@ -68,6 +68,27 @@ def clean_html_text(text: str) -> str:
     return text.strip()
 
 
+def load_gcp_flow(redirect_uri):
+    """
+    Loads Google OAuth Flow securely.
+    Supports either environment variable (for cloud like Vercel) or local filesystem.
+    """
+    gcp_json_str = os.environ.get("GCP_CREDENTIALS_JSON")
+    if gcp_json_str:
+        import tempfile
+        temp_dir = tempfile.gettempdir()
+        temp_path = os.path.join(temp_dir, "gcp_credentials.json")
+        with open(temp_path, "w", encoding="utf-8") as f:
+            f.write(gcp_json_str)
+        return Flow.from_client_secrets_file(temp_path, scopes=SCOPES, redirect_uri=redirect_uri)
+        
+    # Local fallback
+    if os.path.exists(CLIENT_SECRETS_FILE):
+        return Flow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES, redirect_uri=redirect_uri)
+        
+    raise FileNotFoundError("Google OAuth client secrets credentials.json not found locally or in environment variables.")
+
+
 def preprocess_text(text: str) -> str:
     text = text.lower()
     text = re.sub(r"http\S+|www\.\S+", " url ", text)
@@ -383,6 +404,9 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly']
 
 @app.route("/gmail")
 def gmail_integration():
+    # Read and pop any warning message from session
+    error_msg = session.pop("gmail_error", None)
+
     if "gmail_creds" in session:
         try:
             creds = Credentials(**session["gmail_creds"])
@@ -511,35 +535,53 @@ def gmail_integration():
             # Filter out any failed requests
             scanned_emails = [r for r in results_list if r is not None]
 
-            return render_template("gmail.html", connected=True, emails=scanned_emails)
+            return render_template("gmail.html", connected=True, emails=scanned_emails, error_msg=error_msg)
             
         except Exception as e:
             print("Gmail API Error:", e)
             session.pop("gmail_creds", None)
+            error_msg = str(e)
 
-    return render_template("gmail.html", connected=False)
+    return render_template("gmail.html", connected=False, error_msg=error_msg)
 
 @app.route("/gmail/login")
 def gmail_login():
-    flow = Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE,
-        scopes=SCOPES,
-        redirect_uri="http://127.0.0.1:5001/gmail/callback"
-    )
+    # Dynamic redirect URI calculation
+    redirect_uri = url_for("gmail_callback", _external=True)
+    if "localhost" not in redirect_uri and "127.0.0.1" not in redirect_uri:
+        redirect_uri = redirect_uri.replace("http://", "https://")
+
+    try:
+        flow = load_gcp_flow(redirect_uri)
+    except Exception as e:
+        print("OAuth Flow Init Error:", e)
+        session["gmail_error"] = (
+            "Google OAuth credentials configuration is missing! To scan Gmail in the cloud, "
+            "you must copy the content of your local 'credentials.json' file and add it as an "
+            "Environment Variable on your Vercel Project named 'GCP_CREDENTIALS_JSON'."
+        )
+        return redirect(url_for("gmail_integration"))
+
     authorization_url, state = flow.authorization_url(access_type="offline", include_granted_scopes="true")
     session["state"] = state
-    session["code_verifier"] = flow.code_verifier  # Store the auto-generated code verifier in session!
+    session["code_verifier"] = flow.code_verifier
     return redirect(authorization_url)
 
 @app.route("/gmail/callback")
 def gmail_callback():
-    flow = Flow.from_client_secrets_file(
-        CLIENT_SECRETS_FILE,
-        scopes=SCOPES,
-        state=session["state"],
-        redirect_uri="http://127.0.0.1:5001/gmail/callback"
-    )
-    flow.code_verifier = session.get("code_verifier")  # Restore the code verifier before fetching the token!
+    # Dynamic redirect URI calculation
+    redirect_uri = url_for("gmail_callback", _external=True)
+    if "localhost" not in redirect_uri and "127.0.0.1" not in redirect_uri:
+        redirect_uri = redirect_uri.replace("http://", "https://")
+
+    try:
+        flow = load_gcp_flow(redirect_uri)
+    except Exception as e:
+        print("OAuth Callback Flow Init Error:", e)
+        session["gmail_error"] = "Failed to load Google OAuth credentials during return callback."
+        return redirect(url_for("gmail_integration"))
+
+    flow.code_verifier = session.get("code_verifier")
     flow.fetch_token(authorization_response=request.url)
     
     creds = flow.credentials

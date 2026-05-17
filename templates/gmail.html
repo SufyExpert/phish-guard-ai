@@ -210,6 +210,25 @@
     {% endif %}
   </div>
 
+  {% if error_msg %}
+  <div style="background: rgba(255, 102, 50, 0.08); border: 1px solid rgba(255, 102, 50, 0.25); border-radius: var(--radius-md); padding: 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: flex-start; gap: 1rem;">
+    <div style="background: rgba(255, 102, 50, 0.12); color: #FF6632; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+      <i data-feather="alert-triangle" style="width: 18px; height: 18px;"></i>
+    </div>
+    <div style="flex: 1;">
+      <h4 style="font-size: 0.95rem; font-weight: 800; color: var(--c-navy); margin: 0 0 0.3rem 0;">GCP OAuth Configuration Required</h4>
+      <p style="font-size: 0.82rem; color: var(--c-muted); line-height: 1.45; margin: 0 0 0.8rem 0;">
+        {{ error_msg }}
+      </p>
+      <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+        <span style="font-size: 0.72rem; font-weight: 700; color: var(--c-navy); background: rgba(7, 0, 51, 0.05); padding: 3px 8px; border-radius: 4px; font-family: var(--font-mono);">
+          Var Name: GCP_CREDENTIALS_JSON
+        </span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="gmail-grid {% if connected %}gmail-grid--full{% endif %}">
     
     {% if not connected %}
