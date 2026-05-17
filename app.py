@@ -4,7 +4,7 @@ Pipeline: Email Text -> TF-IDF Vectorization -> Logistic Regression
 Color palette: #FFFFFF | #FBAC41 | #FF6632 | #070033
 """
 
-import os, io, base64, re, json
+import os, io, base64, re, json, html
 import numpy as np
 import pandas as pd
 import matplotlib
@@ -49,6 +49,23 @@ def _fig_to_b64(fig):
     encoded = base64.b64encode(buf.read()).decode("utf-8")
     plt.close(fig)
     return encoded
+
+
+def clean_html_text(text: str) -> str:
+    """Strip style, script, HTML tags, unescape entities and normalize spaces."""
+    if not text:
+        return ""
+    # Unescape HTML entities
+    text = html.unescape(text)
+    # Strip script tags and content
+    text = re.sub(r"<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>", " ", text, flags=re.IGNORECASE)
+    # Strip style tags and content
+    text = re.sub(r"<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>", " ", text, flags=re.IGNORECASE)
+    # Strip all other HTML tags
+    text = re.sub(r"<[^>]+>", " ", text)
+    # Compact excessive whitespaces/newlines
+    text = re.sub(r"\s+", " ", text)
+    return text.strip()
 
 
 def preprocess_text(text: str) -> str:
@@ -413,30 +430,58 @@ def gmail_integration():
                     subject = next((h["value"] for h in headers if h["name"].lower() == "subject"), "(No Subject)")
                     sender = next((h["value"] for h in headers if h["name"].lower() == "from"), "Unknown Sender")
                     
-                    # Extract plain text body
+                    # Extract email text body (handling plain text, HTML, and nested parts)
                     body = ""
+                    html_body = ""
+                    
+                    def extract_body_parts(parts):
+                        nonlocal body, html_body
+                        for part in parts:
+                            mime_type = part.get("mimeType", "")
+                            body_data = part.get("body", {}).get("data", "")
+                            if not body_data:
+                                if "parts" in part:
+                                    extract_body_parts(part["parts"])
+                                continue
+                            try:
+                                decoded = base64.urlsafe_b64decode(body_data).decode("utf-8", errors="ignore")
+                                if mime_type == "text/plain":
+                                    body = decoded
+                                elif mime_type == "text/html":
+                                    html_body = decoded
+                            except Exception:
+                                pass
+                                
                     if "parts" in payload:
-                        for part in payload["parts"]:
-                            if part["mimeType"] == "text/plain" and "data" in part["body"]:
-                                body = base64.urlsafe_b64decode(part["body"]["data"]).decode("utf-8")
-                                break
-                            elif "parts" in part:
-                                for subpart in part["parts"]:
-                                    if subpart["mimeType"] == "text/plain" and "data" in subpart["body"]:
-                                        body = base64.urlsafe_b64decode(subpart["body"]["data"]).decode("utf-8")
-                                        break
-                    elif "body" in payload and "data" in payload["body"]:
-                        body = base64.urlsafe_b64decode(payload["body"]["data"]).decode("utf-8")
+                        extract_body_parts(payload["parts"])
+                    else:
+                        mime_type = payload.get("mimeType", "")
+                        body_data = payload.get("body", {}).get("data", "")
+                        if body_data:
+                            try:
+                                decoded = base64.urlsafe_b64decode(body_data).decode("utf-8", errors="ignore")
+                                if mime_type == "text/plain":
+                                    body = decoded
+                                elif mime_type == "text/html":
+                                    html_body = decoded
+                            except Exception:
+                                pass
 
-                    if not body:
-                        body = msg.get("snippet", "")
+                    final_body = body
+                    if not final_body and html_body:
+                        final_body = html_body
+                    if not final_body:
+                        final_body = msg.get("snippet", "")
+                        
+                    # Clean all HTML formatting, CSS blocks, JS scripts, and unescape entities
+                    cleaned_body = clean_html_text(final_body)
 
                     # Predict Phishing risk
-                    clean_body = preprocess_text(body)
-                    raw_prob = float(pipeline.predict_proba([clean_body])[0][1])
+                    clean_for_ml = preprocess_text(cleaned_body)
+                    raw_prob = float(pipeline.predict_proba([clean_for_ml])[0][1])
                     
                     # Refine threat level with hybrid rule assessor
-                    prob, pred = adjust_threat_with_rules(sender, subject, body, raw_prob)
+                    prob, pred = adjust_threat_with_rules(sender, subject, cleaned_body, raw_prob)
                     
                     threat_info = compute_threat_level(prob)
                     
@@ -451,7 +496,8 @@ def gmail_integration():
                         "bg": threat_info["bg"],
                         "border": threat_info["border"],
                         "icon": threat_info["icon"],
-                        "snippet": body[:120] + "..." if len(body) > 120 else body
+                        "snippet": cleaned_body[:100] + "..." if len(cleaned_body) > 100 else cleaned_body,
+                        "body": cleaned_body[:1200] + "..." if len(cleaned_body) > 1200 else cleaned_body
                     }
                 except Exception as ex:
                     print(f"Error parsing message {m['id']}: {ex}")
