@@ -807,66 +807,199 @@ a {
 /* ── Onboarding & Welcome Mobile Responsive overrides ──────────────── */
 @media (max-width: 768px) {
   .intro-body {
-    height: auto;
-    min-height: 100vh;
-    overflow-y: auto;
-    padding: 1.5rem 0;
+    height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
+    padding: 0;
   }
   
   .intro-container, .onboard-container {
-    height: auto;
-    min-height: 100vh;
+    height: 100vh;
+    max-height: 100vh;
     padding: 1.5rem 1rem;
-    justify-content: center;
-    gap: 1.5rem;
+    justify-content: space-between;
+    gap: 1rem;
+    overflow: hidden;
   }
   
   .onboard-content {
-    max-height: none;
-    padding: 1.5rem 1.25rem;
-    overflow: visible;
+    max-height: calc(100vh - 120px);
+    padding: 1.25rem 1.25rem;
+    overflow: hidden;
   }
   
   .intro-logo {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
   }
   
   .intro-title {
     font-size: 1.8rem;
     line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+  
+  .intro-subtitle {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
   }
   
   .intro-stats {
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.2rem;
+    flex-direction: row;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
     width: 100%;
+    justify-content: space-between;
+  }
+  
+  .intro-stat__value {
+    font-size: 1.2rem;
+  }
+  
+  .intro-stat__label {
+    font-size: 0.6rem;
+    letter-spacing: 0.02em;
   }
   
   .intro-stat__divider {
-    width: 100%;
-    height: 1px;
+    width: 1px;
+    height: 25px;
     background: rgba(255, 255, 255, 0.1);
   }
   
   .intro-cta {
     flex-direction: column;
     width: 100%;
-    gap: 0.8rem;
+    gap: 0.6rem;
   }
   
   .btn-intro-primary, .btn-intro-secondary {
     width: 100%;
     justify-content: center;
+    padding: 0.75rem 1.5rem;
+    font-size: 0.9rem;
   }
   
-  .threat-levels {
-    grid-template-columns: 1fr;
-    gap: 0.8rem;
+  .intro-features {
+    display: none;
+  }
+  
+  /* Onboarding Slide 1 Pipeline compacting */
+  .pipeline-step__desc {
+    display: none;
+  }
+  
+  .pipeline-arrow {
+    display: none;
+  }
+  
+  .pipeline-steps {
+    gap: 0.4rem;
+    margin-bottom: 1rem;
   }
   
   .pipeline-step {
-    gap: 0.8rem;
+    padding: 0.6rem 0.8rem;
+  }
+  
+  .pipeline-step__num {
+    font-size: 1.1rem;
+  }
+  
+  .pipeline-step__title {
+    font-size: 0.8rem;
+  }
+  
+  /* Onboarding Slide 2 Threat levels 2x2 grid */
+  .threat-levels {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .threat-level-card {
+    padding: 0.6rem;
+  }
+  
+  .threat-level-card__icon {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 0.4rem;
+  }
+  
+  .threat-level-card__icon svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+  
+  .threat-level-card__label {
+    font-size: 0.78rem;
+    margin-bottom: 0;
+  }
+  
+  .threat-level-card__desc {
+    display: none;
+  }
+  
+  /* Onboarding Slide 3 Ready cards compacting */
+  .ready-card__desc {
+    display: none;
+  }
+  
+  .ready-cards {
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  
+  .ready-card {
+    padding: 0.6rem 0.8rem;
+    gap: 0.75rem;
+  }
+  
+  .ready-card__icon {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .ready-card__icon svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+  
+  .ready-card__title {
+    font-size: 0.82rem;
+  }
+  
+  .onboard-icon {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 0.5rem;
+  }
+  
+  .onboard-icon svg {
+    width: 22px !important;
+    height: 22px !important;
+  }
+  
+  .onboard-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+  }
+  
+  .onboard-desc {
+    font-size: 0.8rem;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+  
+  .onboard-nav {
+    margin-top: 0.5rem;
+  }
+  
+  .btn-onboard-next, .btn-onboard-launch, .btn-onboard-back {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.82rem;
   }
 }
 
