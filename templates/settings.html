@@ -103,13 +103,31 @@
         </div>
       </div>
 
-      <div class="settings-rows" style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; border-top: 1px dashed rgba(7, 0, 51, 0.1); padding-top: 1.5rem;">
-        <div class="settings-row" style="padding: 0.3rem 0;"><span class="settings-row__key">Model Class</span><span class="settings-row__val">sklearn.linear_model.LogisticRegression</span></div>
-        <div class="settings-row" style="padding: 0.3rem 0;"><span class="settings-row__key">Feature Extraction</span><span class="settings-row__val">TfidfVectorizer (unigram + bigram)</span></div>
-        <div class="settings-row" style="padding: 0.3rem 0;"><span class="settings-row__key">C Parameter</span><span class="settings-row__val">1.0</span></div>
-        <div class="settings-row" style="padding: 0.3rem 0;"><span class="settings-row__key">Solver</span><span class="settings-row__val">lbfgs</span></div>
-        <div class="settings-row" style="padding: 0.3rem 0;"><span class="settings-row__key">Class Weights</span><span class="settings-row__val">Balanced</span></div>
-        <div class="settings-row" style="padding: 0.3rem 0;"><span class="settings-row__key">Training Split</span><span class="settings-row__val">80% / 20% Stratified</span></div>
+      <div class="settings-rows" style="margin-top: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; border-top: 1px dashed rgba(7, 0, 51, 0.1); padding-top: 1.5rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.3rem; padding: 0.7rem 0.9rem; background: rgba(7, 0, 51, 0.03); border-radius: var(--radius-sm); border: 1px solid rgba(7, 0, 51, 0.06);">
+          <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--c-muted); letter-spacing: 0.5px;">Model Class</span>
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--c-navy); word-break: break-all;">sklearn.linear_model.LogisticRegression</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.3rem; padding: 0.7rem 0.9rem; background: rgba(7, 0, 51, 0.03); border-radius: var(--radius-sm); border: 1px solid rgba(7, 0, 51, 0.06);">
+          <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--c-muted); letter-spacing: 0.5px;">Feature Extraction</span>
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--c-navy); word-break: break-word;">TfidfVectorizer (unigram + bigram)</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.3rem; padding: 0.7rem 0.9rem; background: rgba(7, 0, 51, 0.03); border-radius: var(--radius-sm); border: 1px solid rgba(7, 0, 51, 0.06);">
+          <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--c-muted); letter-spacing: 0.5px;">C Parameter</span>
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--c-navy);">1.0</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.3rem; padding: 0.7rem 0.9rem; background: rgba(7, 0, 51, 0.03); border-radius: var(--radius-sm); border: 1px solid rgba(7, 0, 51, 0.06);">
+          <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--c-muted); letter-spacing: 0.5px;">Solver</span>
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--c-navy);">lbfgs</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.3rem; padding: 0.7rem 0.9rem; background: rgba(7, 0, 51, 0.03); border-radius: var(--radius-sm); border: 1px solid rgba(7, 0, 51, 0.06);">
+          <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--c-muted); letter-spacing: 0.5px;">Class Weights</span>
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--c-navy);">Balanced</span>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 0.3rem; padding: 0.7rem 0.9rem; background: rgba(7, 0, 51, 0.03); border-radius: var(--radius-sm); border: 1px solid rgba(7, 0, 51, 0.06);">
+          <span style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--c-muted); letter-spacing: 0.5px;">Training Split</span>
+          <span style="font-size: 0.85rem; font-weight: 700; color: var(--c-navy);">80% / 20% Stratified</span>
+        </div>
       </div>
     </div>
 
