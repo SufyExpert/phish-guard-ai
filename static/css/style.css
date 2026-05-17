@@ -818,20 +818,42 @@ a {
   .intro-container, .onboard-container {
     height: 100vh;
     max-height: 100vh;
-    padding: 1.5rem 1rem;
-    justify-content: center;
-    gap: 1rem;
+    padding: 1.5rem 0 0 0;
+    justify-content: flex-start;
+    gap: 1.25rem;
     overflow: hidden;
   }
   
   .onboard-content {
-    max-height: calc(100vh - 120px);
-    padding: 1.25rem 1.25rem;
+    width: 100%;
+    flex-grow: 1;
+    max-height: none;
+    padding: 1.5rem 1.5rem 2.5rem;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     overflow: hidden;
   }
   
-  .intro-logo {
+  .intro-hero {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.5rem 1.5rem 2.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     margin-bottom: 0;
+  }
+  
+  .intro-logo {
+    margin-bottom: 0.5rem;
   }
   
   .intro-title {
@@ -2222,6 +2244,15 @@ a {
 .demo-email-row__badge--phishing { background: var(--c-danger-bg); color: var(--c-orange); }
 .demo-email-row__badge--safe { background: var(--c-success-bg); color: var(--c-success); }
 
+.demo-email-row__actions {
+  text-align: right;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.5rem;
+}
+
 /* ══════════════════════════════════════════════════
    SETTINGS PAGE
    ══════════════════════════════════════════════════ */
@@ -2417,6 +2448,70 @@ a {
   .dash-grid { grid-template-columns: 1fr; gap: 1.25rem; }
   .dash-card--tips { grid-column: span 1 !important; }
   .tips-grid { grid-template-columns: 1fr; gap: 1rem; }
+  
+  /* Gmail Mobile fixes */
+  .demo-email-row {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 0.8rem !important;
+    padding: 1rem !important;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .demo-email-row__body {
+    width: 100%;
+  }
+  
+  .demo-email-row__actions {
+    text-align: left !important;
+    align-items: center !important;
+    flex-direction: row !important;
+    justify-content: space-between;
+    width: 100%;
+    border-top: 1px solid var(--c-border);
+    padding-top: 0.8rem;
+    margin-top: 0.2rem;
+  }
+  
+  .modal-card {
+    width: calc(100% - 2rem) !important;
+    margin: 1rem !important;
+    max-height: 85vh !important;
+  }
+  
+  /* Analyze Mobile fixes */
+  .analyze-info-row {
+    grid-template-columns: 1fr !important;
+    gap: 1rem;
+  }
+  
+  .sample-emails {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.6rem;
+  }
+  
+  .sample-emails__label {
+    margin-bottom: 0.2rem;
+  }
+  
+  .btn-sample {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .analyze-form__footer {
+    flex-direction: column-reverse;
+    gap: 0.8rem;
+    width: 100%;
+  }
+  
+  .analyze-form__footer .btn-secondary, 
+  .analyze-form__footer .btn-primary {
+    width: 100%;
+    justify-content: center;
+  }
   
   .results-grid { grid-template-columns: 1fr; }
   .gmail-grid { grid-template-columns: 1fr; }
