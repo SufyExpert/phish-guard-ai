@@ -811,6 +811,7 @@ a {
   .intro-body {
     height: 100dvh;
     max-height: 100dvh;
+    align-items: flex-start !important;
     overflow: hidden;
     padding: 0;
   }
@@ -818,9 +819,9 @@ a {
   .intro-container, .onboard-container {
     height: 100dvh;
     max-height: 100dvh;
-    padding: 1rem 0 0 0;
+    padding: 0.5rem 0 0 0;
     justify-content: flex-start;
-    gap: 0.5rem;
+    gap: 0.25rem;
     overflow: hidden;
     box-sizing: border-box;
   }
@@ -829,7 +830,7 @@ a {
     width: 100%;
     flex-grow: 1;
     max-height: none;
-    padding: 1rem 1.25rem 1.5rem;
+    padding: 1rem 1.25rem 2.25rem;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     border-bottom: none;
     border-left: none;
@@ -847,12 +848,21 @@ a {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 1.25rem 1.25rem 1.5rem;
+    padding: 1.25rem 1.25rem 2.25rem;
     background: rgba(255, 255, 255, 0.02);
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
     margin-bottom: 0;
     box-sizing: border-box;
+  }
+  
+  .intro-steps {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    margin-top: 0;
   }
   
   .intro-logo {
