@@ -1,0 +1,9 @@
+Flask
+gunicorn
+scikit-learn
+joblib
+pandas
+numpy
+matplotlib
+google-auth-oauthlib
+google-api-python-client

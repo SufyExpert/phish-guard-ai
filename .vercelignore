@@ -1,0 +1,12 @@
+# Exclude massive local datasets to stay under Vercel's 50MB zip file limits
+Phishing_Email.csv
+
+# Exclude local editor assets & git
+.git/
+.idea/
+.vscode/
+__pycache__/
+*.pyc
+
+# Exclude screenshot catalogs
+screenshots/
