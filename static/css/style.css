@@ -2421,8 +2421,17 @@ a {
 }
 
 @media (max-width: 768px) {
-  .topbar { padding: 0 1.5rem; }
+  .topbar { padding: 0 1rem !important; justify-content: space-between !important; }
   .topbar__nav { display: none; }
+  .btn-scan-nav { display: none !important; }
+  
+  .dash-card__header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.5rem !important;
+    width: 100% !important;
+  }
+  
   .dashboard-page, .analyze-page, .results-page, .gmail-page, .settings-page { padding: 1.25rem 1rem; }
   
   .dash-header {
@@ -2463,6 +2472,14 @@ a {
   .tips-grid { grid-template-columns: 1fr; gap: 1rem; }
   
   /* Gmail Mobile fixes */
+  .gmail-demo-card {
+    max-width: 100% !important;
+    width: 100% !important;
+    padding: 1.25rem 1rem !important;
+    box-sizing: border-box !important;
+    margin-top: 1rem !important;
+  }
+
   .demo-email-row {
     flex-direction: column;
     align-items: stretch !important;
@@ -2470,6 +2487,14 @@ a {
     padding: 1rem !important;
     max-width: 100%;
     box-sizing: border-box;
+  }
+  
+  .demo-email-row__sender, 
+  .demo-email-row__subject, 
+  .demo-email-row__snippet {
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
   }
   
   .demo-email-row__body {
