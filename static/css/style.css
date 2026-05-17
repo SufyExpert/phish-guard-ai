@@ -235,24 +235,29 @@ a {
 .intro-body {
   background: var(--c-navy);
   color: var(--c-white);
-  min-height: 100vh;
+  height: 100vh;
+  max-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow-x: hidden;
+  overflow: hidden;
   position: relative;
 }
 
 .intro-container {
   max-width: 1000px;
   width: 100%;
-  padding: 3rem 2rem;
+  height: 100vh;
+  max-height: 100vh;
+  padding: 2rem 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   text-align: center;
   position: relative;
   z-index: 2;
+  overflow: hidden;
 }
 
 .intro-bg {
@@ -308,12 +313,12 @@ a {
   display: flex;
   align-items: center;
   gap: 0.8rem;
-  margin-bottom: 2.5rem;
+  margin-bottom: 0;
 }
 
 .intro-logo__icon {
-  width: 48px;
-  height: 48px;
+  width: 44px;
+  height: 44px;
   background: linear-gradient(135deg, var(--c-orange), var(--c-amber));
   border-radius: var(--radius-md);
   display: flex;
@@ -325,7 +330,7 @@ a {
 
 .intro-logo__text {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.6rem;
   font-weight: 900;
   letter-spacing: -0.03em;
   color: var(--c-white);
@@ -339,7 +344,7 @@ a {
 
 .intro-hero {
   max-width: 720px;
-  margin-bottom: 3.5rem;
+  margin-bottom: 0;
 }
 
 .intro-badge {
@@ -389,11 +394,11 @@ a {
 }
 
 .intro-subtitle {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #B3B0C2;
   max-width: 600px;
-  margin: 0 auto 2.5rem;
-  line-height: 1.7;
+  margin: 0 auto 1.25rem;
+  line-height: 1.6;
 }
 
 /* Stats */
@@ -401,10 +406,10 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 2.5rem;
-  margin-bottom: 3rem;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
   background: rgba(255, 255, 255, 0.03);
-  padding: 1.5rem 3rem;
+  padding: 1rem 2.2rem;
   border-radius: var(--radius-lg);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
@@ -505,7 +510,7 @@ a {
 .intro-steps {
   display: flex;
   gap: 0.6rem;
-  margin-top: 3.5rem;
+  margin-top: 0;
 }
 
 .intro-step {
@@ -529,12 +534,23 @@ a {
 /* Onboarding Common */
 .onboard-container {
   max-width: 680px;
+  height: 100vh;
+  max-height: 100vh;
+  padding: 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
 }
 
 .onboard-content {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  padding: 3rem 2.5rem;
+  padding: 1.5rem 2.2rem;
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
   width: 100%;
@@ -543,17 +559,24 @@ a {
   align-items: center;
   position: relative;
   backdrop-filter: blur(10px);
+  max-height: calc(100vh - 140px);
+  overflow: hidden;
 }
 
 .onboard-icon {
-  width: 72px;
-  height: 72px;
-  border-radius: var(--radius-lg);
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--c-white);
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.onboard-icon svg {
+  width: 28px !important;
+  height: 28px !important;
 }
 
 .onboard-icon--amber { background: linear-gradient(135deg, var(--c-amber), #f59e0b); box-shadow: 0 8px 24px rgba(251, 172, 65, 0.3); }
@@ -561,18 +584,18 @@ a {
 .onboard-icon--green { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3); }
 
 .onboard-title {
-  font-size: 1.8rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--c-white);
-  margin-bottom: 0.8rem;
+  margin-bottom: 0.4rem;
 }
 
 .onboard-desc {
   color: #B3B0C2;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   max-width: 500px;
-  margin-bottom: 2rem;
-  line-height: 1.6;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
 }
 
 /* Pipeline Step Styles */
@@ -580,40 +603,40 @@ a {
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 0.5rem;
-  margin-bottom: 2.5rem;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
 }
 
 .pipeline-step {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 1.2rem;
+  padding: 0.75rem 1rem;
   border-radius: var(--radius-md);
   text-align: left;
 }
 
 .pipeline-step__num {
   font-family: 'Outfit', sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.3rem;
   font-weight: 800;
   color: var(--c-amber);
   opacity: 0.8;
 }
 
 .pipeline-step__title {
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
   color: var(--c-white);
-  margin-bottom: 0.15rem;
+  margin-bottom: 0.1rem;
 }
 
 .pipeline-step__desc {
-  font-size: 0.82rem;
+  font-size: 0.76rem;
   color: #8C88A5;
-  line-height: 1.5;
+  line-height: 1.4;
 }
 
 .pipeline-arrow {
@@ -689,15 +712,15 @@ a {
 .threat-levels {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
+  gap: 0.75rem;
   width: 100%;
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
 }
 
 .threat-level-card {
   background: rgba(255, 255, 255, 0.01);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 1.25rem;
+  padding: 0.8rem 1rem;
   border-radius: var(--radius-md);
   text-align: left;
 }
@@ -738,18 +761,18 @@ a {
 .ready-cards {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
+  gap: 0.6rem;
   width: 100%;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.25rem;
 }
 
 .ready-card {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1rem;
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.04);
-  padding: 1.25rem;
+  padding: 0.8rem 1rem;
   border-radius: var(--radius-md);
   text-align: left;
 }
