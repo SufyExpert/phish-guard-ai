@@ -428,8 +428,8 @@ def gmail_integration():
             # Connect to Gmail Service (main thread)
             service = build("gmail", "v1", credentials=creds)
             
-            # Fetch 50 latest primary inbox messages
-            results = service.users().messages().list(userId="me", maxResults=50, q="category:primary").execute()
+            # Fetch 50 latest inbox messages
+            results = service.users().messages().list(userId="me", maxResults=50, q="label:INBOX").execute()
             messages = results.get("messages", [])
             
             from concurrent.futures import ThreadPoolExecutor
