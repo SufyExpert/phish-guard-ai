@@ -15,6 +15,9 @@
 <body>
 <div class="app-shell">
   <nav class="topbar" role="navigation" aria-label="Primary navigation">
+    <button class="topbar__hamburger" id="hamburger-btn" onclick="toggleMobileDrawer()" aria-label="Toggle menu">
+      <i data-feather="menu" style="width:20px;height:20px;"></i>
+    </button>
     <a href="{{ url_for('dashboard') }}" class="topbar__brand" id="nav-brand">
       <div class="topbar__logo"><i data-feather="shield" style="width:18px;height:18px;"></i></div>
       <span class="topbar__brand-text">PhishGuard <span class="topbar__brand-accent">AI</span></span>
@@ -30,6 +33,36 @@
       <a href="{{ url_for('analyze') }}" class="btn-scan-nav" id="btn-nav-scan">Scan Email</a>
     </div>
   </nav>
+  
+  <!-- Premium Mobile Navigation Left Drawer Overlay -->
+  <div class="mobile-drawer" id="mobile-drawer">
+    <div class="mobile-drawer__overlay" onclick="toggleMobileDrawer()"></div>
+    <div class="mobile-drawer__content">
+      <div class="mobile-drawer__header">
+        <div class="mobile-drawer__brand">
+          <div class="topbar__logo" style="width:32px;height:32px;"><i data-feather="shield" style="width:16px;height:16px;"></i></div>
+          <span class="topbar__brand-text" style="color:var(--c-navy);font-size:1.15rem;">PhishGuard <span class="topbar__brand-accent">AI</span></span>
+        </div>
+        <button onclick="toggleMobileDrawer()" class="mobile-drawer__close" aria-label="Close menu">&times;</button>
+      </div>
+      <div class="mobile-drawer__status">
+        <span class="status-dot"></span>
+        <span class="status-text">Model Active &mdash; 98.26% Accuracy</span>
+      </div>
+      <nav class="mobile-drawer__nav">
+        <a href="{{ url_for('dashboard') }}" class="mobile-drawer__link" onclick="toggleMobileDrawer()"><i data-feather="grid" style="width:16px;height:16px;"></i> Dashboard</a>
+        <a href="{{ url_for('analyze') }}" class="mobile-drawer__link" onclick="toggleMobileDrawer()"><i data-feather="search" style="width:16px;height:16px;"></i> Analyze Email</a>
+        <a href="{{ url_for('gmail_integration') }}" class="mobile-drawer__link" onclick="toggleMobileDrawer()"><i data-feather="mail" style="width:16px;height:16px;"></i> Gmail Scanner</a>
+        <a href="{{ url_for('settings') }}" class="mobile-drawer__link" onclick="toggleMobileDrawer()"><i data-feather="settings" style="width:16px;height:16px;"></i> Settings</a>
+      </nav>
+      <div class="mobile-drawer__footer">
+        <a href="{{ url_for('analyze') }}" class="btn-primary btn-primary--full" onclick="toggleMobileDrawer()" style="background:linear-gradient(135deg,var(--c-orange),var(--c-amber));border:none;color:#fff;font-weight:700;border-radius:var(--radius-sm);padding:0.7rem 1rem;text-decoration:none;font-size:0.85rem;">
+          <i data-feather="shield" style="width:14px;height:14px;"></i> Scan New Email
+        </a>
+      </div>
+    </div>
+  </div>
+
   {% block content %}{% endblock %}
   <footer class="footer">
     <div class="footer__inner">
@@ -39,10 +72,15 @@
   </footer>
 </div>
 <script>
+  function toggleMobileDrawer() {
+    const drawer = document.getElementById('mobile-drawer');
+    drawer.classList.toggle('active');
+  }
+
   document.addEventListener('DOMContentLoaded',function(){
     if(typeof feather!=='undefined') feather.replace();
     const path=window.location.pathname;
-    document.querySelectorAll('.topbar__link').forEach(l=>{
+    document.querySelectorAll('.topbar__link, .mobile-drawer__link').forEach(l=>{
       if(l.getAttribute('href')===path) l.classList.add('active');
     });
   });
