@@ -1,294 +1,139 @@
 {% extends "base.html" %}
-{% block title %}Risk Report — {{ first_name }} {{ last_name }}{% endblock %}
-
+{% block title %}Detection Results — PhishGuard AI{% endblock %}
 {% block content %}
 <main class="results-page">
 
-  <!-- ── Header ────────────────────────────────────── -->
-  <div class="results-page__header animate-up">
-    <span class="section-label">Assessment Report</span>
-    <h1 class="results-page__title">
-      Results for {{ first_name }} {{ last_name }}
-    </h1>
-    <p class="results-page__sub">
-      Generated on {{ now if now else '' }}. This report is for informational purposes only.
-    </p>
+  <div class="results-header">
+    <a href="{{ url_for('analyze') }}" class="results-back" id="btn-results-back">
+      <i data-feather="arrow-left" style="width:15px;height:15px;"></i> New Analysis
+    </a>
+    <div class="results-meta">Analyzed {{ now }}</div>
   </div>
 
-  <!-- ── Verdict card ──────────────────────────────── -->
-  {% if prediction == 'high' %}
-  <div class="verdict-card verdict-card--high animate-up animate-up-1"
-       role="region" aria-label="Risk verdict">
-    <div>
-      <div class="verdict-card__label">Health Risk Level</div>
-      <h2 class="verdict-card__title">High Risk Detected</h2>
-      <p class="verdict-card__desc">
-        The model predicts a high likelihood of health complications based on
-        your current lifestyle profile. Review the personalised suggestions
-        below — focusing on modifiable factors can meaningfully reduce your risk.
-      </p>
+  <!-- Verdict Banner -->
+  <div class="verdict-banner verdict-banner--{{ 'phishing' if is_phishing else 'safe' }}">
+    <div class="verdict-banner__left">
+      <div class="verdict-banner__icon">
+        <i data-feather="{{ threat.icon }}" style="width:32px;height:32px;"></i>
+      </div>
+      <div class="verdict-banner__body">
+        <div class="verdict-banner__level">{{ threat.level }} Risk</div>
+        <div class="verdict-banner__label">{{ label }}</div>
+        <div class="verdict-banner__desc">{{ threat.description }}</div>
+      </div>
     </div>
-    <div class="verdict-card__badge">
-      <span class="verdict-card__badge-pct">{{ probability }}%</span>
-      <span class="verdict-card__badge-text">Risk score</span>
+    <div class="verdict-banner__right">
+      <div class="verdict-score">
+        <div class="verdict-score__pct">{{ probability }}%</div>
+        <div class="verdict-score__label">Phishing<br/>Probability</div>
+      </div>
     </div>
   </div>
 
-  {% else %}
-  <div class="verdict-card verdict-card--low animate-up animate-up-1"
-       role="region" aria-label="Risk verdict">
-    <div>
-      <div class="verdict-card__label">Health Risk Level</div>
-      <h2 class="verdict-card__title">Low Risk Profile</h2>
-      <p class="verdict-card__desc">
-        The model classifies your current lifestyle profile as low risk.
-        Continue maintaining your healthy habits. Regular medical check-ups
-        are still recommended regardless of predicted risk level.
-      </p>
+  <!-- Email Info -->
+  <div class="email-info-card">
+    <div class="email-info-item">
+      <div class="email-info-item__label"><i data-feather="user" style="width:13px;height:13px;"></i> Sender</div>
+      <div class="email-info-item__val">{{ sender_name }}</div>
     </div>
-    <div class="verdict-card__badge">
-      <span class="verdict-card__badge-pct">{{ probability }}%</span>
-      <span class="verdict-card__badge-text">High-risk prob.</span>
+    <div class="email-info-item">
+      <div class="email-info-item__label"><i data-feather="file-text" style="width:13px;height:13px;"></i> Subject</div>
+      <div class="email-info-item__val">{{ email_subject }}</div>
+    </div>
+    <div class="email-info-item">
+      <div class="email-info-item__label"><i data-feather="cpu" style="width:13px;height:13px;"></i> Model</div>
+      <div class="email-info-item__val">TF-IDF + Logistic Regression</div>
+    </div>
+    <div class="email-info-item">
+      <div class="email-info-item__label"><i data-feather="target" style="width:13px;height:13px;"></i> Accuracy</div>
+      <div class="email-info-item__val">{{ metadata.accuracy }}%</div>
     </div>
   </div>
-  {% endif %}
 
-  <!-- ── Row 1: Key metrics + gauge chart ──────────── -->
-  <div class="results-grid animate-up animate-up-2">
+  <div class="results-grid">
 
-    <!-- Key metrics -->
-    <div class="section-card">
-      <div class="section-card__title">
-        <span class="section-card__title-icon">
-          <i data-feather="user" style="width:14px;height:14px;"></i>
-        </span>
-        Your Profile Summary
+    <!-- Charts Column -->
+    <div class="results-charts">
+      <div class="section-card">
+        <div class="section-card__title"><i data-feather="bar-chart-2" style="width:14px;height:14px;"></i> Probability Gauge</div>
+        <img src="data:image/png;base64,{{ charts.gauge }}" alt="Phishing probability gauge" class="chart-img"/>
       </div>
-      <div class="stat-row">
-        <div class="stat-item">
-          <div class="stat-item__value">{{ form_data.age | int }}</div>
-          <div class="stat-item__label">Age (yrs)</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-item__value">{{ bmi }}</div>
-          <div class="stat-item__label">BMI</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-item__value">{{ form_data.sleep | float | round(1) }}</div>
-          <div class="stat-item__label">Sleep (h)</div>
-        </div>
-        <div class="stat-item">
-          <div class="stat-item__value">{{ form_data.weight | int }}</div>
-          <div class="stat-item__label">Weight (kg)</div>
-        </div>
+      <div class="section-card">
+        <div class="section-card__title"><i data-feather="activity" style="width:14px;height:14px;"></i> Threat Signal Analysis</div>
+        <img src="data:image/png;base64,{{ charts.signals }}" alt="Threat signals chart" class="chart-img"/>
       </div>
-
-      <div style="margin-top:1.25rem; display:flex; flex-wrap:wrap; gap:.6rem;">
-        {% set badges = [
-          ('exercise',   form_data.exercise  | capitalize, 'zap'),
-          ('smoking',    'Smoker' if form_data.smoking == 'yes' else 'Non-smoker', 'wind'),
-          ('alcohol',    'Alcohol: Yes' if form_data.alcohol == 'yes' else 'Alcohol: No', 'droplet'),
-          ('profession', form_data.profession | replace('_',' ') | title, 'briefcase'),
-        ] %}
-        {% for key, val, icon in badges %}
-        <span style="display:inline-flex;align-items:center;gap:.35rem;
-                     background:var(--c-bg);border:1px solid var(--c-light);
-                     border-radius:99px;padding:.3rem .8rem;font-size:.78rem;
-                     color:var(--c-dark);font-weight:500;">
-          <i data-feather="{{ icon }}" style="width:12px;height:12px;color:var(--c-mid);"></i>
-          {{ val }}
-        </span>
-        {% endfor %}
+      <div class="section-card">
+        <div class="section-card__title"><i data-feather="pie-chart" style="width:14px;height:14px;"></i> Classification Confidence</div>
+        <img src="data:image/png;base64,{{ charts.pie }}" alt="Classification pie chart" class="chart-img"/>
       </div>
     </div>
 
-    <!-- Gauge chart -->
-    <div class="section-card">
-      <div class="section-card__title">
-        <span class="section-card__title-icon">
-          <i data-feather="percent" style="width:14px;height:14px;"></i>
-        </span>
-        Risk Probability Gauge
-      </div>
-      {% if charts.gauge %}
-      <img class="chart-img" src="data:image/png;base64,{{ charts.gauge }}"
-           alt="Risk probability gauge chart showing {{ probability }}% high-risk probability" />
-      {% endif %}
-    </div>
+    <!-- Analysis Column -->
+    <div class="results-analysis">
 
-  </div>
-
-  <!-- ── Row 2: BMI chart + Lifestyle chart ────────── -->
-  <div class="results-grid animate-up animate-up-3">
-
-    <div class="section-card">
-      <div class="section-card__title">
-        <span class="section-card__title-icon">
-          <i data-feather="sliders" style="width:14px;height:14px;"></i>
-        </span>
-        BMI Category
-      </div>
-      {% if charts.bmi %}
-      <img class="chart-img" src="data:image/png;base64,{{ charts.bmi }}"
-           alt="BMI category bar chart highlighting your BMI of {{ bmi }}" />
-      {% endif %}
-    </div>
-
-    <div class="section-card">
-      <div class="section-card__title">
-        <span class="section-card__title-icon">
-          <i data-feather="activity" style="width:14px;height:14px;"></i>
-        </span>
-        Lifestyle Factor Scores
-      </div>
-      {% if charts.lifestyle %}
-      <img class="chart-img" src="data:image/png;base64,{{ charts.lifestyle }}"
-           alt="Lifestyle factor scores horizontal bar chart" />
-      {% endif %}
-    </div>
-
-  </div>
-
-  <!-- ── Row 3: Metrics vs ideal chart ─────────────── -->
-  <div class="results-grid animate-up animate-up-4">
-
-    <div class="section-card">
-      <div class="section-card__title">
-        <span class="section-card__title-icon">
-          <i data-feather="bar-chart-2" style="width:14px;height:14px;"></i>
-        </span>
-        Your Metrics vs Ideal Range
-      </div>
-      {% if charts.metrics %}
-      <img class="chart-img" src="data:image/png;base64,{{ charts.metrics }}"
-           alt="Bar chart comparing your BMI, sleep and age against ideal ranges" />
-      {% endif %}
-    </div>
-
-    <!-- Modifiable factor key numbers -->
-    <div class="section-card">
-      <div class="section-card__title">
-        <span class="section-card__title-icon">
-          <i data-feather="info" style="width:14px;height:14px;"></i>
-        </span>
-        Key Risk Indicators
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:.85rem;">
-
-        {% set bmi_val = bmi | float %}
-        {% if bmi_val < 18.5 %}
-          {% set bmi_status = 'Underweight' %}
-          {% set bmi_color  = 'var(--c-warn)' %}
-        {% elif bmi_val < 25 %}
-          {% set bmi_status = 'Normal' %}
-          {% set bmi_color  = 'var(--c-mid)' %}
-        {% elif bmi_val < 30 %}
-          {% set bmi_status = 'Overweight' %}
-          {% set bmi_color  = 'var(--c-warn)' %}
-        {% else %}
-          {% set bmi_status = 'Obese' %}
-          {% set bmi_color  = 'var(--c-danger)' %}
-        {% endif %}
-
-        {% set sleep_val = form_data.sleep | float %}
-        {% if sleep_val < 6 %}
-          {% set sleep_status = 'Insufficient' %}
-          {% set sleep_color  = 'var(--c-danger)' %}
-        {% elif sleep_val <= 9 %}
-          {% set sleep_status = 'Optimal' %}
-          {% set sleep_color  = 'var(--c-mid)' %}
-        {% else %}
-          {% set sleep_status = 'Excessive' %}
-          {% set sleep_color  = 'var(--c-warn)' %}
-        {% endif %}
-
-        {% for row in [
-            ('BMI',      bmi ~ ' kg/m²',    bmi_status,   bmi_color,   'trending-up'),
-            ('Sleep',    (form_data.sleep|float|round(1)) ~ ' hrs/night', sleep_status, sleep_color, 'moon'),
-            ('Smoking',  'Yes' if form_data.smoking=='yes' else 'No',
-                ('Risk factor' if form_data.smoking=='yes' else 'No concern'),
-                ('var(--c-danger)' if form_data.smoking=='yes' else 'var(--c-mid)'),
-                'wind'),
-            ('Alcohol',  'Yes' if form_data.alcohol=='yes' else 'No',
-                ('Moderate risk' if form_data.alcohol=='yes' else 'No concern'),
-                ('var(--c-warn)' if form_data.alcohol=='yes' else 'var(--c-mid)'),
-                'droplet'),
-          ] %}
-        <div style="display:flex;align-items:center;gap:.85rem;
-                    padding:.75rem;background:var(--c-bg);border-radius:10px;">
-          <i data-feather="{{ row[4] }}"
-             style="width:16px;height:16px;color:{{ row[3] }};flex-shrink:0;"></i>
-          <div style="flex:1;">
-            <div style="font-size:.8rem;font-weight:700;color:var(--c-dark);">{{ row[0] }}</div>
-            <div style="font-size:.78rem;color:var(--c-muted);">{{ row[1] }}</div>
+      <!-- Signal Indicators -->
+      <div class="section-card">
+        <div class="section-card__title"><i data-feather="alert-circle" style="width:14px;height:14px;"></i> Signal Indicators</div>
+        <div class="signals-list">
+          <div class="signal-row">
+            <span class="signal-row__label">URL / Link Count</span>
+            <span class="signal-row__val signal-row__val--{{ 'warn' if signals.urls > 3 else 'ok' }}">{{ signals.urls }}</span>
           </div>
-          <span style="font-size:.75rem;font-weight:600;padding:.2rem .65rem;
-                       border-radius:99px;background:{{ row[3] }}20;color:{{ row[3] }};">
-            {{ row[2] }}
-          </span>
-        </div>
-        {% endfor %}
-
-      </div>
-    </div>
-
-  </div>
-
-  <!-- ── Personalised suggestions ──────────────────── -->
-  <div class="section-card animate-up" style="margin-top:1.5rem;">
-    <div class="section-card__title">
-      <span class="section-card__title-icon">
-        <i data-feather="check-square" style="width:14px;height:14px;"></i>
-      </span>
-      Personalised Suggestions &mdash; Modifiable Factors Only
-    </div>
-
-    {% if suggestions %}
-    <div class="suggestions-list">
-      {% for s in suggestions %}
-      <div class="suggestion-item">
-        <div class="suggestion-icon">
-          <i data-feather="{{ s.icon }}" style="width:16px;height:16px;"></i>
-        </div>
-        <div class="suggestion-content">
-          <div class="suggestion-content__title">{{ s.title }}</div>
-          <div class="suggestion-content__body">{{ s.body }}</div>
+          <div class="signal-row">
+            <span class="signal-row__label">Urgency Keywords</span>
+            <span class="signal-row__val signal-row__val--{{ 'warn' if signals.urgency > 3 else 'ok' }}">{{ signals.urgency }}</span>
+          </div>
+          <div class="signal-row">
+            <span class="signal-row__label">Suspicious Phrases</span>
+            <span class="signal-row__val signal-row__val--{{ 'warn' if signals.suspicious > 2 else 'ok' }}">{{ signals.suspicious }}</span>
+          </div>
+          <div class="signal-row">
+            <span class="signal-row__label">Email Addresses Found</span>
+            <span class="signal-row__val signal-row__val--{{ 'warn' if signals.email_addrs > 1 else 'ok' }}">{{ signals.email_addrs }}</span>
+          </div>
+          <div class="signal-row">
+            <span class="signal-row__label">Special Characters (!$%)</span>
+            <span class="signal-row__val signal-row__val--{{ 'warn' if signals.special_chars > 5 else 'ok' }}">{{ signals.special_chars }}</span>
+          </div>
+          <div class="signal-row">
+            <span class="signal-row__label">ALL CAPS Ratio</span>
+            <span class="signal-row__val signal-row__val--{{ 'warn' if signals.caps_ratio > 0.15 else 'ok' }}">{{ (signals.caps_ratio * 100)|round(1) }}%</span>
+          </div>
         </div>
       </div>
-      {% endfor %}
-    </div>
-    {% else %}
-    <p style="font-size:.9rem;color:var(--c-muted);">
-      No specific suggestions at this time. Continue maintaining your current healthy habits.
-    </p>
-    {% endif %}
 
-    <div style="margin-top:1.5rem;padding:1rem;background:var(--c-bg);
-                border-radius:var(--radius-md);font-size:.8rem;color:var(--c-muted);
-                border-left:3px solid var(--c-light);">
-      <strong style="color:var(--c-dark);">Disclaimer:</strong>
-      Suggestions are based solely on modifiable lifestyle factors identified in the
-      dataset. Non-modifiable factors (age, marital status, profession) are used for
-      prediction but do not generate recommendations. This tool is not a substitute for
-      professional medical advice.
+      <!-- Recommendations -->
+      <div class="section-card">
+        <div class="section-card__title"><i data-feather="shield" style="width:14px;height:14px;"></i> Security Recommendations</div>
+        <div class="recommendations">
+          {% for rec in recommendations %}
+          <div class="rec-item rec-item--{{ rec.priority }}">
+            <div class="rec-item__icon"><i data-feather="{{ rec.icon }}" style="width:16px;height:16px;"></i></div>
+            <div class="rec-item__body">
+              <div class="rec-item__title">{{ rec.title }}</div>
+              <div class="rec-item__desc">{{ rec.body }}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Email Preview -->
+      <div class="section-card">
+        <div class="section-card__title"><i data-feather="file-text" style="width:14px;height:14px;"></i> Email Preview</div>
+        <div class="email-preview">{{ email_text }}</div>
+      </div>
+
     </div>
   </div>
 
-  <!-- ── Action buttons ─────────────────────────────── -->
-  <div class="results-actions animate-up">
-    <a href="{{ url_for('form_page') }}" class="btn-primary" id="btn-new-assessment">
-      <i data-feather="refresh-cw" style="width:15px;height:15px;"></i>
-      New Assessment
+  <div class="results-actions">
+    <a href="{{ url_for('analyze') }}" class="btn-primary" id="btn-results-new">
+      <i data-feather="search" style="width:15px;height:15px;"></i> Analyze Another Email
     </a>
-    <a href="{{ url_for('welcome') }}" class="btn-secondary" id="btn-home">
-      <i data-feather="home" style="width:15px;height:15px;"></i>
-      Return Home
+    <a href="{{ url_for('dashboard') }}" class="btn-secondary" id="btn-results-dash">
+      <i data-feather="grid" style="width:15px;height:15px;"></i> Back to Dashboard
     </a>
-    <button onclick="window.print()" class="btn-secondary" id="btn-print">
-      <i data-feather="printer" style="width:15px;height:15px;"></i>
-      Print Report
-    </button>
   </div>
 
 </main>

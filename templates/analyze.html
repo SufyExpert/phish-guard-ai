@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% block title %}Analyze Email — PhishGuard AI{% endblock %}
+{% block content %}
+<main class="analyze-page">
+  <div class="analyze-header">
+    <div class="section-label"><i data-feather="search" style="width:13px;height:13px;"></i> Email Analysis</div>
+    <h1 class="analyze-title">Phishing Detection Scanner</h1>
+    <p class="analyze-sub">Paste any email content below. Our AI will analyse it for phishing threats in under a second.</p>
+  </div>
+
+  {% if errors %}
+  <div class="error-banner" role="alert">
+    <div class="error-banner__icon"><i data-feather="alert-circle" style="width:18px;height:18px;"></i></div>
+    <div>
+      <div class="error-banner__title">Please fix the following:</div>
+      <ul class="error-banner__list">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <form action="{{ url_for('analyze') }}" method="POST" id="analyze-form" class="analyze-form-card">
+    <div class="analyze-form__row">
+      <div class="form-group">
+        <label class="form-label" for="sender_name">Sender Name / Email</label>
+        <input type="text" id="sender_name" name="sender_name" class="form-input"
+               placeholder="e.g. support@bank.com" value="{{ sender_name or '' }}"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="email_subject">Subject Line</label>
+        <input type="text" id="email_subject" name="email_subject" class="form-input"
+               placeholder="e.g. Urgent: Verify your account" value="{{ email_subject or '' }}"/>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="email_text">
+        Email Body <sup>*</sup>
+        <span class="form-hint">Minimum 20 characters required</span>
+      </label>
+      <textarea id="email_text" name="email_text" class="form-textarea" rows="12"
+                placeholder="Paste the full email body here...">{{ email_text or '' }}</textarea>
+      <div class="form-meta" id="char-counter">0 characters</div>
+    </div>
+
+    <!-- Sample phishing examples -->
+    <div class="sample-emails">
+      <div class="sample-emails__label">Try a sample:</div>
+      <button type="button" class="btn-sample" id="sample-phishing" onclick="loadSample('phishing')">
+        <i data-feather="alert-triangle" style="width:13px;height:13px;"></i> Phishing Sample
+      </button>
+      <button type="button" class="btn-sample btn-sample--safe" id="sample-safe" onclick="loadSample('safe')">
+        <i data-feather="check-circle" style="width:13px;height:13px;"></i> Safe Sample
+      </button>
+    </div>
+
+    <div class="analyze-form__footer">
+      <a href="{{ url_for('dashboard') }}" class="btn-secondary" id="btn-analyze-back">
+        <i data-feather="arrow-left" style="width:15px;height:15px;"></i> Back
+      </a>
+      <button type="submit" class="btn-primary btn-scan" id="btn-analyze-submit">
+        <i data-feather="shield" style="width:16px;height:16px;"></i>
+        <span>Analyze Email</span>
+        <span class="btn-scan__loading" id="scan-loading" style="display:none;">Analyzing…</span>
+      </button>
+    </div>
+  </form>
+
+  <div class="analyze-info-row">
+    <div class="analyze-info-card">
+      <div class="analyze-info-card__icon"><i data-feather="lock" style="width:16px;height:16px;"></i></div>
+      <div><strong>Privacy Safe</strong> — email text is not stored or transmitted externally.</div>
+    </div>
+    <div class="analyze-info-card">
+      <div class="analyze-info-card__icon"><i data-feather="zap" style="width:16px;height:16px;"></i></div>
+      <div><strong>Instant Results</strong> — analysis completes in under one second.</div>
+    </div>
+    <div class="analyze-info-card">
+      <div class="analyze-info-card__icon"><i data-feather="cpu" style="width:16px;height:16px;"></i></div>
+      <div><strong>98.26% Accuracy</strong> — trained on 18,000+ real-world emails.</div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const SAMPLES = {
+  phishing: {
+    sender: 'security-alert@paypa1-verify.com',
+    subject: 'URGENT: Your account has been suspended!',
+    body: `Dear Valued Customer,
+
+We have detected suspicious activity on your PayPal account. Your account has been temporarily SUSPENDED for security reasons.
+
+To restore access IMMEDIATELY, you must verify your identity by clicking the link below:
+
+http://paypa1-account-verify.xyz/restore?token=abc123
+
+You have only 24 HOURS to complete verification or your account will be permanently closed.
+
+Please provide:
+- Full name
+- Date of birth
+- Credit card number
+- Social Security Number
+
+Click here NOW: http://verify-paypal-account.info/urgent
+
+This is an automated security alert. Do not ignore this message.
+
+PayPal Security Team`
+  },
+  safe: {
+    sender: 'newsletter@github.com',
+    subject: 'Your monthly GitHub digest - May 2026',
+    body: `Hi there,
+
+Here's your monthly digest of activity on GitHub for May 2026.
+
+Repositories you might be interested in:
+- awesome-python: A curated list of awesome Python frameworks
+- react: A JavaScript library for building user interfaces
+
+Your activity this month:
+- 12 commits across 3 repositories
+- 5 pull requests opened
+- 2 issues created
+
+Visit your dashboard at github.com to see more.
+
+Happy coding!
+The GitHub Team`
+  }
+};
+
+function loadSample(type) {
+  const s = SAMPLES[type];
+  document.getElementById('sender_name').value = s.sender;
+  document.getElementById('email_subject').value = s.subject;
+  const ta = document.getElementById('email_text');
+  ta.value = s.body;
+  updateCounter(ta);
+}
+
+function updateCounter(ta) {
+  document.getElementById('char-counter').textContent = ta.value.length + ' characters';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  if(typeof feather!=='undefined') feather.replace();
+  const ta = document.getElementById('email_text');
+  ta.addEventListener('input', ()=>updateCounter(ta));
+  updateCounter(ta);
+
+  document.getElementById('analyze-form').addEventListener('submit', function() {
+    document.getElementById('scan-loading').style.display = 'inline';
+    document.querySelector('.btn-scan span').style.display = 'none';
+  });
+});
+</script>
+{% endblock %}

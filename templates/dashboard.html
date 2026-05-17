@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — PhishGuard AI{% endblock %}
+{% block content %}
+<main class="dashboard-page">
+
+  <div class="dash-header">
+    <div class="dash-header__left">
+      <div class="dash-badge"><span class="status-dot"></span> System Online</div>
+      <h1 class="dash-title">Security Dashboard</h1>
+      <p class="dash-sub">AI-powered phishing detection — real-time threat intelligence.</p>
+    </div>
+    <div class="dash-header__right">
+      <a href="{{ url_for('analyze') }}" class="btn-primary" id="btn-dash-scan">
+        <i data-feather="search" style="width:16px;height:16px;"></i> Scan Email
+      </a>
+    </div>
+  </div>
+
+  <!-- Model Stats Row -->
+  <div class="dash-stats-row">
+    <div class="dash-stat-card dash-stat-card--accent">
+      <div class="dash-stat-card__icon"><i data-feather="target" style="width:22px;height:22px;"></i></div>
+      <div class="dash-stat-card__value">{{ stats.model_accuracy }}%</div>
+      <div class="dash-stat-card__label">Model Accuracy</div>
+    </div>
+    <div class="dash-stat-card">
+      <div class="dash-stat-card__icon"><i data-feather="trending-up" style="width:22px;height:22px;"></i></div>
+      <div class="dash-stat-card__value">{{ stats.roc_auc }}</div>
+      <div class="dash-stat-card__label">ROC-AUC Score</div>
+    </div>
+    <div class="dash-stat-card">
+      <div class="dash-stat-card__icon"><i data-feather="database" style="width:22px;height:22px;"></i></div>
+      <div class="dash-stat-card__value">{{ "{:,}".format(stats.total_samples) }}</div>
+      <div class="dash-stat-card__label">Training Samples</div>
+    </div>
+    <div class="dash-stat-card">
+      <div class="dash-stat-card__icon"><i data-feather="layers" style="width:22px;height:22px;"></i></div>
+      <div class="dash-stat-card__value">40K</div>
+      <div class="dash-stat-card__label">TF-IDF Features</div>
+    </div>
+    <div class="dash-stat-card">
+      <div class="dash-stat-card__icon"><i data-feather="zap" style="width:22px;height:22px;"></i></div>
+      <div class="dash-stat-card__value">&lt;1s</div>
+      <div class="dash-stat-card__label">Analysis Speed</div>
+    </div>
+  </div>
+
+  <div class="dash-grid">
+    <!-- Pipeline Card -->
+    <div class="dash-card dash-card--pipeline">
+      <div class="dash-card__header">
+        <div class="dash-card__title"><i data-feather="cpu" style="width:15px;height:15px;"></i> ML Pipeline</div>
+      </div>
+      <div class="pipeline-visual">
+        <div class="pipeline-node">
+          <div class="pipeline-node__icon pipeline-node__icon--amber"><i data-feather="mail" style="width:18px;height:18px;"></i></div>
+          <div class="pipeline-node__label">Email Text</div>
+        </div>
+        <div class="pipeline-visual__arrow"><i data-feather="arrow-right" style="width:14px;height:14px;"></i></div>
+        <div class="pipeline-node">
+          <div class="pipeline-node__icon pipeline-node__icon--orange"><i data-feather="hash" style="width:18px;height:18px;"></i></div>
+          <div class="pipeline-node__label">TF-IDF</div>
+        </div>
+        <div class="pipeline-visual__arrow"><i data-feather="arrow-right" style="width:14px;height:14px;"></i></div>
+        <div class="pipeline-node">
+          <div class="pipeline-node__icon pipeline-node__icon--navy"><i data-feather="activity" style="width:18px;height:18px;"></i></div>
+          <div class="pipeline-node__label">Logistic Reg.</div>
+        </div>
+        <div class="pipeline-visual__arrow"><i data-feather="arrow-right" style="width:14px;height:14px;"></i></div>
+        <div class="pipeline-node">
+          <div class="pipeline-node__icon pipeline-node__icon--result"><i data-feather="shield" style="width:18px;height:18px;"></i></div>
+          <div class="pipeline-node__label">Result</div>
+        </div>
+      </div>
+      <div class="pipeline-details">
+        <div class="pipeline-detail-item"><span class="pipeline-detail-item__key">Vectorizer</span><span class="pipeline-detail-item__val">TF-IDF (unigrams + bigrams)</span></div>
+        <div class="pipeline-detail-item"><span class="pipeline-detail-item__key">Classifier</span><span class="pipeline-detail-item__val">Logistic Regression (C=1.0)</span></div>
+        <div class="pipeline-detail-item"><span class="pipeline-detail-item__key">Max Features</span><span class="pipeline-detail-item__val">40,000</span></div>
+        <div class="pipeline-detail-item"><span class="pipeline-detail-item__key">Class Weighting</span><span class="pipeline-detail-item__val">Balanced</span></div>
+        <div class="pipeline-detail-item"><span class="pipeline-detail-item__key">Train Split</span><span class="pipeline-detail-item__val">80% / 20%</span></div>
+      </div>
+    </div>
+
+    <!-- Threat Categories Card -->
+    <div class="dash-card">
+      <div class="dash-card__header">
+        <div class="dash-card__title"><i data-feather="alert-triangle" style="width:15px;height:15px;"></i> Threat Levels</div>
+      </div>
+      <div class="threat-matrix">
+        <div class="threat-matrix-row threat-matrix-row--critical">
+          <div class="threat-matrix-row__label"><i data-feather="alert-octagon" style="width:13px;height:13px;"></i> Critical</div>
+          <div class="threat-matrix-row__bar"><div class="threat-matrix-row__fill" style="width:85%"></div></div>
+          <div class="threat-matrix-row__pct">85%+</div>
+        </div>
+        <div class="threat-matrix-row threat-matrix-row--high">
+          <div class="threat-matrix-row__label"><i data-feather="alert-triangle" style="width:13px;height:13px;"></i> High</div>
+          <div class="threat-matrix-row__bar"><div class="threat-matrix-row__fill" style="width:65%"></div></div>
+          <div class="threat-matrix-row__pct">65%+</div>
+        </div>
+        <div class="threat-matrix-row threat-matrix-row--medium">
+          <div class="threat-matrix-row__label"><i data-feather="alert-circle" style="width:13px;height:13px;"></i> Medium</div>
+          <div class="threat-matrix-row__bar"><div class="threat-matrix-row__fill" style="width:40%"></div></div>
+          <div class="threat-matrix-row__pct">40%+</div>
+        </div>
+        <div class="threat-matrix-row threat-matrix-row--safe">
+          <div class="threat-matrix-row__label"><i data-feather="shield-check" style="width:13px;height:13px;"></i> Safe</div>
+          <div class="threat-matrix-row__bar"><div class="threat-matrix-row__fill" style="width:20%"></div></div>
+          <div class="threat-matrix-row__pct">&lt;40%</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Scan Card -->
+    <div class="dash-card dash-card--cta">
+      <div class="dash-card__cta-icon"><i data-feather="search" style="width:32px;height:32px;"></i></div>
+      <h3 class="dash-card__cta-title">Analyze an Email Now</h3>
+      <p class="dash-card__cta-desc">Paste any suspicious email text to get instant AI-powered phishing detection.</p>
+      <a href="{{ url_for('analyze') }}" class="btn-primary btn-primary--full" id="btn-dash-cta-scan">Start Analysis</a>
+    </div>
+
+    <!-- Gmail Integration Card -->
+    <div class="dash-card dash-card--gmail">
+      <div class="dash-card__header">
+        <div class="dash-card__title"><i data-feather="mail" style="width:15px;height:15px;"></i> Gmail Integration</div>
+        <span class="badge-demo">Demo Mode</span>
+      </div>
+      <p class="dash-card__desc">Connect your Gmail account to automatically scan incoming emails for phishing threats.</p>
+      <div class="gmail-features">
+        <div class="gmail-feature"><i data-feather="check" style="width:13px;height:13px;"></i> Auto-scan inbox</div>
+        <div class="gmail-feature"><i data-feather="check" style="width:13px;height:13px;"></i> Real-time alerts</div>
+        <div class="gmail-feature"><i data-feather="check" style="width:13px;height:13px;"></i> Threat history</div>
+      </div>
+      <a href="{{ url_for('gmail_integration') }}" class="btn-secondary" id="btn-dash-gmail">Connect Gmail</a>
+    </div>
+
+    <!-- Security Tips Card -->
+    <div class="dash-card dash-card--tips" style="grid-column: span 2;">
+      <div class="dash-card__header">
+        <div class="dash-card__title"><i data-feather="shield" style="width:15px;height:15px;"></i> Security Best Practices</div>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-item">
+          <div class="tip-item__icon"><i data-feather="link-off" style="width:16px;height:16px;"></i></div>
+          <div class="tip-item__title">Verify Links</div>
+          <div class="tip-item__desc">Hover over links before clicking. Legitimate sites use HTTPS.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-item__icon"><i data-feather="clock" style="width:16px;height:16px;"></i></div>
+          <div class="tip-item__title">Resist Urgency</div>
+          <div class="tip-item__desc">Phishers create fake urgency. Take time to verify before acting.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-item__icon"><i data-feather="user-check" style="width:16px;height:16px;"></i></div>
+          <div class="tip-item__title">Verify Sender</div>
+          <div class="tip-item__desc">Check the full sender email address, not just the display name.</div>
+        </div>
+        <div class="tip-item">
+          <div class="tip-item__icon"><i data-feather="lock" style="width:16px;height:16px;"></i></div>
+          <div class="tip-item__title">Enable 2FA</div>
+          <div class="tip-item__desc">Two-factor authentication protects accounts even if credentials leak.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+{% endblock %}

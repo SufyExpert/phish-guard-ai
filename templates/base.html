@@ -1,56 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Health Risk Prediction System — Predict your health risk using AI and get personalised lifestyle insights." />
-  <title>{% block title %}Health Risk Prediction System{% endblock %}</title>
-
-  <!-- Fonts -->
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="description" content="PhishGuard AI — AI-Based Email Phishing Detection System"/>
+  <title>{% block title %}PhishGuard AI{% endblock %}</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'&gt;&lt;defs&gt;&lt;linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'&gt;&lt;stop offset='0%' stop-color='%23FF6632'/&gt;&lt;stop offset='100%' stop-color='%23FBAC41'/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;&lt;rect width='24' height='24' rx='6' fill='url(%23g)'/&gt;&lt;path d='M12 17s4-2 4-5V8.5l-4-1.5-4 1.5V12c0 3 4 5 4 5z' fill='none' stroke='%23FFFFFF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/&gt;&lt;/svg&gt;"/>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-  <!-- Global stylesheet -->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
-
-  <!-- Feather Icons (lightweight SVG icons) -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
   <script src="https://unpkg.com/feather-icons/dist/feather.min.js" defer></script>
-
   {% block head %}{% endblock %}
 </head>
 <body>
-
 <div class="app-shell">
-
-  <!-- ── Topbar ───────────────────────────────────── -->
   <nav class="topbar" role="navigation" aria-label="Primary navigation">
-    <a href="{{ url_for('welcome') }}" class="topbar__brand" id="nav-brand">
-      <span class="topbar__brand-dot"></span>
-      <span class="topbar__brand-text">Health Risk Prediction System</span>
+    <a href="{{ url_for('dashboard') }}" class="topbar__brand" id="nav-brand">
+      <div class="topbar__logo"><i data-feather="shield" style="width:18px;height:18px;"></i></div>
+      <span class="topbar__brand-text">PhishGuard <span class="topbar__brand-accent">AI</span></span>
     </a>
+    <div class="topbar__nav">
+      <a href="{{ url_for('dashboard') }}" class="topbar__link" id="nav-dashboard"><i data-feather="grid" style="width:14px;height:14px;"></i> Dashboard</a>
+      <a href="{{ url_for('analyze') }}" class="topbar__link" id="nav-analyze"><i data-feather="search" style="width:14px;height:14px;"></i> Analyze</a>
+      <a href="{{ url_for('gmail_integration') }}" class="topbar__link" id="nav-gmail"><i data-feather="mail" style="width:14px;height:14px;"></i> Gmail</a>
+      <a href="{{ url_for('settings') }}" class="topbar__link" id="nav-settings"><i data-feather="settings" style="width:14px;height:14px;"></i> Settings</a>
+    </div>
     <div class="topbar__actions">
-      <a href="{{ url_for('form_page') }}" class="topbar__link" id="nav-assessment">New Assessment</a>
-      <a href="{{ url_for('reset') }}"     class="topbar__link" id="nav-reset">Reset</a>
+      <div class="topbar__status"><span class="status-dot"></span><span class="status-text">Model Active</span></div>
+      <a href="{{ url_for('analyze') }}" class="btn-scan-nav" id="btn-nav-scan">Scan Email</a>
     </div>
   </nav>
-
-  <!-- ── Page content ─────────────────────────────── -->
   {% block content %}{% endblock %}
-
-  <!-- ── Footer ───────────────────────────────────── -->
   <footer class="footer">
-    &copy; 2025 Health Risk Prediction System &mdash; For educational and informational purposes only. Not a substitute for professional medical advice.
+    <div class="footer__inner">
+      <span>&copy; 2026 PhishGuard AI &mdash; AI-Powered Email Phishing Detection</span>
+      <span class="footer__note">For educational purposes only.</span>
+    </div>
   </footer>
-
 </div>
-
-<!-- Feather Icons init -->
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    if (typeof feather !== 'undefined') feather.replace();
+  document.addEventListener('DOMContentLoaded',function(){
+    if(typeof feather!=='undefined') feather.replace();
+    const path=window.location.pathname;
+    document.querySelectorAll('.topbar__link').forEach(l=>{
+      if(l.getAttribute('href')===path) l.classList.add('active');
+    });
   });
 </script>
-
 {% block scripts %}{% endblock %}
 </body>
 </html>

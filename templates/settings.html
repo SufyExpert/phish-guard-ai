@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}Settings — PhishGuard AI{% endblock %}
+{% block content %}
+<main class="settings-page">
+  <div class="dash-header">
+    <div class="dash-header__left">
+      <div class="dash-badge"><i data-feather="settings" style="width:12px;height:12px;"></i> Configuration</div>
+      <h1 class="dash-title">Settings & Profile</h1>
+      <p class="dash-sub">Configure your PhishGuard AI preferences and model parameters.</p>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    <!-- Model Info -->
+    <div class="settings-card">
+      <div class="settings-card__header"><i data-feather="cpu" style="width:16px;height:16px;"></i> Model Information</div>
+      <div class="settings-rows">
+        <div class="settings-row"><span class="settings-row__key">Model Type</span><span class="settings-row__val">Logistic Regression</span></div>
+        <div class="settings-row"><span class="settings-row__key">Vectorizer</span><span class="settings-row__val">TF-IDF (unigrams + bigrams)</span></div>
+        <div class="settings-row"><span class="settings-row__key">Max Features</span><span class="settings-row__val">40,000</span></div>
+        <div class="settings-row"><span class="settings-row__key">Test Accuracy</span><span class="settings-row__val settings-row__val--green">98.26%</span></div>
+        <div class="settings-row"><span class="settings-row__key">ROC-AUC</span><span class="settings-row__val settings-row__val--green">0.9969</span></div>
+        <div class="settings-row"><span class="settings-row__key">Training Set</span><span class="settings-row__val">14,476 samples</span></div>
+        <div class="settings-row"><span class="settings-row__key">Test Set</span><span class="settings-row__val">3,620 samples</span></div>
+        <div class="settings-row"><span class="settings-row__key">Dataset</span><span class="settings-row__val">Phishing Email Dataset (18K+)</span></div>
+      </div>
+    </div>
+
+    <!-- Detection Thresholds -->
+    <div class="settings-card">
+      <div class="settings-card__header"><i data-feather="sliders" style="width:16px;height:16px;"></i> Threat Level Thresholds</div>
+      <div class="threshold-items">
+        <div class="threshold-item">
+          <div class="threshold-item__header">
+            <span class="threshold-item__label threshold-item__label--critical">Critical Threat</span>
+            <span class="threshold-item__val">85%</span>
+          </div>
+          <div class="threshold-bar"><div class="threshold-bar__fill threshold-bar__fill--critical" style="width:85%"></div></div>
+        </div>
+        <div class="threshold-item">
+          <div class="threshold-item__header">
+            <span class="threshold-item__label threshold-item__label--high">High Threat</span>
+            <span class="threshold-item__val">65%</span>
+          </div>
+          <div class="threshold-bar"><div class="threshold-bar__fill threshold-bar__fill--high" style="width:65%"></div></div>
+        </div>
+        <div class="threshold-item">
+          <div class="threshold-item__header">
+            <span class="threshold-item__label threshold-item__label--medium">Medium Threat</span>
+            <span class="threshold-item__val">40%</span>
+          </div>
+          <div class="threshold-bar"><div class="threshold-bar__fill threshold-bar__fill--medium" style="width:40%"></div></div>
+        </div>
+        <div class="threshold-item">
+          <div class="threshold-item__header">
+            <span class="threshold-item__label threshold-item__label--safe">Safe</span>
+            <span class="threshold-item__val">&lt;40%</span>
+          </div>
+          <div class="threshold-bar"><div class="threshold-bar__fill threshold-bar__fill--safe" style="width:20%"></div></div>
+        </div>
+      </div>
+      <p class="settings-note">Thresholds are based on the trained model's probability outputs. Adjust in phishing_app.py for production use.</p>
+    </div>
+
+    <!-- Preprocessing Settings -->
+    <div class="settings-card">
+      <div class="settings-card__header"><i data-feather="filter" style="width:16px;height:16px;"></i> Preprocessing Pipeline</div>
+      <div class="settings-rows">
+        <div class="settings-row"><span class="settings-row__key">Lowercase</span><span class="settings-row__val settings-row__val--green">Enabled</span></div>
+        <div class="settings-row"><span class="settings-row__key">URL Normalization</span><span class="settings-row__val settings-row__val--green">Enabled (url token)</span></div>
+        <div class="settings-row"><span class="settings-row__key">Email Normalization</span><span class="settings-row__val settings-row__val--green">Enabled (email token)</span></div>
+        <div class="settings-row"><span class="settings-row__key">HTML Tag Removal</span><span class="settings-row__val settings-row__val--green">Enabled</span></div>
+        <div class="settings-row"><span class="settings-row__key">Non-Alpha Removal</span><span class="settings-row__val settings-row__val--green">Enabled</span></div>
+        <div class="settings-row"><span class="settings-row__key">Min Term Frequency</span><span class="settings-row__val">3 documents</span></div>
+        <div class="settings-row"><span class="settings-row__key">Max Term Frequency</span><span class="settings-row__val">90% of docs</span></div>
+        <div class="settings-row"><span class="settings-row__key">Sublinear TF Scaling</span><span class="settings-row__val settings-row__val--green">Enabled</span></div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="settings-card settings-card--about">
+      <div class="settings-card__header"><i data-feather="info" style="width:16px;height:16px;"></i> About PhishGuard AI</div>
+      <div class="about-content">
+        <div class="about-logo">
+          <div class="intro-logo__icon" style="width:48px;height:48px;"><i data-feather="shield" style="width:24px;height:24px;"></i></div>
+        </div>
+        <p>PhishGuard AI is an academic AI cybersecurity project demonstrating email phishing detection using machine learning. The system uses a TF-IDF + Logistic Regression pipeline trained on 18,000+ real-world emails to achieve 98.26% classification accuracy.</p>
+        <p style="margin-top:1rem;font-size:.82rem;color:var(--c-muted);">Version 1.0 &bull; Built with Flask, scikit-learn &bull; Dataset: Phishing Email Dataset</p>
+      </div>
+      <a href="{{ url_for('reset') }}" class="btn-secondary btn-reset" id="btn-settings-reset">
+        <i data-feather="refresh-cw" style="width:14px;height:14px;"></i> Reset Session
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}

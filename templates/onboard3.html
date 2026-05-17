@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Get Started — PhishGuard AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js" defer></script>
+</head>
+<body class="intro-body">
+<div class="intro-container onboard-container">
+  <div class="intro-bg">
+    <div class="intro-bg__orb intro-bg__orb--1"></div>
+    <div class="intro-bg__orb intro-bg__orb--3"></div>
+    <div class="intro-grid"></div>
+  </div>
+  <div class="intro-logo">
+    <div class="intro-logo__icon"><i data-feather="shield" style="width:22px;height:22px;"></i></div>
+    <span class="intro-logo__text">PhishGuard <span>AI</span></span>
+  </div>
+  <div class="onboard-content">
+    <div class="onboard-icon onboard-icon--green">
+      <i data-feather="check-circle" style="width:36px;height:36px;"></i>
+    </div>
+    <h2 class="onboard-title">You're All Set!</h2>
+    <p class="onboard-desc">PhishGuard AI is ready to protect your inbox. Here's what you can do right now:</p>
+    <div class="ready-cards">
+      <div class="ready-card">
+        <div class="ready-card__icon ready-card__icon--amber"><i data-feather="search" style="width:20px;height:20px;"></i></div>
+        <div class="ready-card__body">
+          <div class="ready-card__title">Analyze an Email</div>
+          <div class="ready-card__desc">Paste any email text and get instant phishing detection results.</div>
+        </div>
+      </div>
+      <div class="ready-card">
+        <div class="ready-card__icon ready-card__icon--orange"><i data-feather="mail" style="width:20px;height:20px;"></i></div>
+        <div class="ready-card__body">
+          <div class="ready-card__title">Connect Gmail</div>
+          <div class="ready-card__desc">Integrate your Gmail account to scan emails automatically.</div>
+        </div>
+      </div>
+      <div class="ready-card">
+        <div class="ready-card__icon ready-card__icon--navy"><i data-feather="bar-chart-2" style="width:20px;height:20px;"></i></div>
+        <div class="ready-card__body">
+          <div class="ready-card__title">View Dashboard</div>
+          <div class="ready-card__desc">Monitor threat statistics and model performance insights.</div>
+        </div>
+      </div>
+    </div>
+    <div class="onboard-nav onboard-nav--final">
+      <a href="{{ url_for('onboard', step=2) }}" class="btn-onboard-back"><i data-feather="arrow-left" style="width:16px;height:16px;"></i> Back</a>
+      <a href="{{ url_for('dashboard') }}" class="btn-onboard-launch" id="btn-onboard-launch">
+        Launch Dashboard <i data-feather="arrow-right" style="width:18px;height:18px;"></i>
+      </a>
+    </div>
+  </div>
+  <div class="intro-steps">
+    <div class="intro-step intro-step--done"></div>
+    <div class="intro-step intro-step--done"></div>
+    <div class="intro-step intro-step--done"></div>
+    <div class="intro-step intro-step--active"></div>
+  </div>
+</div>
+<script>document.addEventListener('DOMContentLoaded',function(){if(typeof feather!=='undefined')feather.replace();});</script>
+</body>
+</html>

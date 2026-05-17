@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Welcome — PhishGuard AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js" defer></script>
+</head>
+<body class="intro-body">
+
+<div class="intro-container">
+  <!-- Animated background -->
+  <div class="intro-bg">
+    <div class="intro-bg__orb intro-bg__orb--1"></div>
+    <div class="intro-bg__orb intro-bg__orb--2"></div>
+    <div class="intro-bg__orb intro-bg__orb--3"></div>
+    <div class="intro-grid"></div>
+  </div>
+
+  <!-- Logo -->
+  <div class="intro-logo">
+    <div class="intro-logo__icon"><i data-feather="shield" style="width:28px;height:28px;"></i></div>
+    <span class="intro-logo__text">PhishGuard <span>AI</span></span>
+  </div>
+
+  <!-- Hero -->
+  <div class="intro-hero">
+    <div class="intro-badge">
+      <span class="intro-badge__dot"></span>
+      AI-Powered Cybersecurity
+    </div>
+    <h1 class="intro-title">
+      Stop Phishing Attacks<br/>
+      <span class="intro-title--accent">Before They Reach You</span>
+    </h1>
+    <p class="intro-subtitle">
+      Advanced email threat detection powered by machine learning.<br/>
+      TF-IDF vectorization + Logistic Regression with 98%+ accuracy.
+    </p>
+
+    <div class="intro-stats">
+      <div class="intro-stat">
+        <div class="intro-stat__value">98.26%</div>
+        <div class="intro-stat__label">Accuracy</div>
+      </div>
+      <div class="intro-stat__divider"></div>
+      <div class="intro-stat">
+        <div class="intro-stat__value">18K+</div>
+        <div class="intro-stat__label">Training Emails</div>
+      </div>
+      <div class="intro-stat__divider"></div>
+      <div class="intro-stat">
+        <div class="intro-stat__value">0.997</div>
+        <div class="intro-stat__label">ROC-AUC Score</div>
+      </div>
+    </div>
+
+    <div class="intro-cta">
+      <a href="{{ url_for('onboard', step=1) }}" class="btn-intro-primary" id="btn-intro-start">
+        Get Started <i data-feather="arrow-right" style="width:18px;height:18px;"></i>
+      </a>
+      <a href="{{ url_for('dashboard') }}" class="btn-intro-secondary" id="btn-intro-skip">
+        Go to Dashboard
+      </a>
+    </div>
+  </div>
+
+  <!-- Feature pills -->
+  <div class="intro-features">
+    <div class="intro-feature-pill">
+      <i data-feather="cpu" style="width:14px;height:14px;"></i> ML-Powered Detection
+    </div>
+    <div class="intro-feature-pill">
+      <i data-feather="mail" style="width:14px;height:14px;"></i> Gmail Integration
+    </div>
+    <div class="intro-feature-pill">
+      <i data-feather="bar-chart-2" style="width:14px;height:14px;"></i> Threat Analytics
+    </div>
+    <div class="intro-feature-pill">
+      <i data-feather="lock" style="width:14px;height:14px;"></i> Privacy First
+    </div>
+  </div>
+
+  <!-- Step indicator -->
+  <div class="intro-steps">
+    <div class="intro-step intro-step--active"></div>
+    <div class="intro-step"></div>
+    <div class="intro-step"></div>
+    <div class="intro-step"></div>
+  </div>
+</div>
+
+<script>document.addEventListener('DOMContentLoaded',function(){if(typeof feather!=='undefined')feather.replace();});</script>
+</body>
+</html>

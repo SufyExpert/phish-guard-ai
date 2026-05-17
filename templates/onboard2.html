@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Threat Detection — PhishGuard AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js" defer></script>
+</head>
+<body class="intro-body">
+<div class="intro-container onboard-container">
+  <div class="intro-bg">
+    <div class="intro-bg__orb intro-bg__orb--2"></div>
+    <div class="intro-bg__orb intro-bg__orb--3"></div>
+    <div class="intro-grid"></div>
+  </div>
+  <div class="intro-logo">
+    <div class="intro-logo__icon"><i data-feather="shield" style="width:22px;height:22px;"></i></div>
+    <span class="intro-logo__text">PhishGuard <span>AI</span></span>
+  </div>
+  <div class="onboard-content">
+    <div class="onboard-icon onboard-icon--orange">
+      <i data-feather="alert-triangle" style="width:36px;height:36px;"></i>
+    </div>
+    <h2 class="onboard-title">Threat Classification</h2>
+    <p class="onboard-desc">Every email is classified into one of four threat levels to help you take the right action.</p>
+    <div class="threat-levels">
+      <div class="threat-level-card threat-level-card--critical">
+        <div class="threat-level-card__icon"><i data-feather="alert-octagon" style="width:16px;height:16px;"></i></div>
+        <div class="threat-level-card__label">Critical (85%+)</div>
+        <div class="threat-level-card__desc">Strong phishing signatures. Delete immediately.</div>
+      </div>
+      <div class="threat-level-card threat-level-card--high">
+        <div class="threat-level-card__icon"><i data-feather="alert-triangle" style="width:16px;height:16px;"></i></div>
+        <div class="threat-level-card__label">High (65–85%)</div>
+        <div class="threat-level-card__desc">Multiple phishing indicators detected.</div>
+      </div>
+      <div class="threat-level-card threat-level-card--medium">
+        <div class="threat-level-card__icon"><i data-feather="alert-circle" style="width:16px;height:16px;"></i></div>
+        <div class="threat-level-card__label">Medium (40–65%)</div>
+        <div class="threat-level-card__desc">Moderate risk — proceed with caution.</div>
+      </div>
+      <div class="threat-level-card threat-level-card--safe">
+        <div class="threat-level-card__icon"><i data-feather="shield-check" style="width:16px;height:16px;"></i></div>
+        <div class="threat-level-card__label">Safe (&lt;40%)</div>
+        <div class="threat-level-card__desc">Email appears legitimate and safe.</div>
+      </div>
+    </div>
+    <div class="onboard-nav">
+      <a href="{{ url_for('onboard', step=1) }}" class="btn-onboard-back"><i data-feather="arrow-left" style="width:16px;height:16px;"></i> Back</a>
+      <a href="{{ url_for('onboard', step=3) }}" class="btn-onboard-next" id="btn-onboard-2-next">Next <i data-feather="arrow-right" style="width:16px;height:16px;"></i></a>
+    </div>
+  </div>
+  <div class="intro-steps">
+    <div class="intro-step intro-step--done"></div>
+    <div class="intro-step intro-step--done"></div>
+    <div class="intro-step intro-step--active"></div>
+    <div class="intro-step"></div>
+  </div>
+</div>
+<script>document.addEventListener('DOMContentLoaded',function(){if(typeof feather!=='undefined')feather.replace();});</script>
+</body>
+</html>

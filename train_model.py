@@ -1,133 +1,162 @@
 """
-train_model.py
-Trains the Random Forest Classifier on the health risk dataset and saves the model,
-scaler, and feature columns for use by the Flask application.
+phishing_train_model.py
+=======================
+Trains a Logistic Regression classifier on the Phishing_Email.csv dataset.
+Pipeline: Raw Email Text → Preprocessing → TF-IDF Vectorization → Logistic Regression
+
+Dataset columns:
+  (index)  |  Email Text  |  Email Type  ('Safe Email' or 'Phishing Email')
 """
 
+import os
+import re
+import string
+import joblib
 import pandas as pd
 import numpy as np
-import joblib
-import os
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import (accuracy_score, classification_report,
+                              confusion_matrix, roc_auc_score)
+from sklearn.pipeline import Pipeline
 
-# ──────────────────────────────────────────────
-# 1. Load dataset
-# ──────────────────────────────────────────────
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-CSV_PATH = os.path.join(BASE_DIR, "Lifestyle_and_Health_Risk_Prediction_Synthetic_Dataset.csv")
+# ── Paths ──────────────────────────────────────────────────────────────────────
+BASE_DIR  = os.path.dirname(os.path.abspath(__file__))
+CSV_PATH  = os.path.join(BASE_DIR, "Phishing_Email.csv")
 MODEL_DIR = os.path.join(BASE_DIR, "model")
 os.makedirs(MODEL_DIR, exist_ok=True)
 
-df = pd.read_csv(CSV_PATH)
-print(f"Dataset loaded: {df.shape[0]} rows, {df.shape[1]} columns")
 
-# ──────────────────────────────────────────────
-# 2. Drop missing target rows
-# ──────────────────────────────────────────────
-df = df.dropna(subset=["health_risk"])
+# ── 1. Load Dataset ────────────────────────────────────────────────────────────
+print("=" * 60)
+print(" PHISHING EMAIL DETECTION — MODEL TRAINING")
+print("=" * 60)
 
-# ──────────────────────────────────────────────
-# 3. Impute missing values
-# ──────────────────────────────────────────────
-df["age"]    = df["age"].fillna(df["age"].mean())
-df["weight"] = df["weight"].fillna(df["weight"].mean())
-df["height"] = df["height"].fillna(df["height"].median())
-df["sleep"]  = df["sleep"].fillna(df["sleep"].median())
-df["bmi"]    = df["bmi"].fillna(df["bmi"].mean())
+df = pd.read_csv(CSV_PATH, index_col=0)
+print(f"\n[1] Raw dataset loaded: {df.shape[0]:,} rows, {df.shape[1]} columns")
+print(f"    Columns: {list(df.columns)}")
 
-# ──────────────────────────────────────────────
-# 4. Label-encode binary columns
-# ──────────────────────────────────────────────
-le_smoking = LabelEncoder()
-le_alcohol = LabelEncoder()
-le_married = LabelEncoder()
 
-df["smoking_encoded"] = le_smoking.fit_transform(df["smoking"])
-df["alcohol_encoded"] = le_alcohol.fit_transform(df["alcohol"])
-df["married_encoded"] = le_married.fit_transform(df["married"])
+# ── 2. Rename & Drop Garbage Rows ──────────────────────────────────────────────
+df.columns = ["text", "label"]
+print(f"\n[2] Label distribution (raw):\n{df['label'].value_counts()}")
 
-# Save label encoder mappings
-smoking_map = dict(zip(le_smoking.classes_, le_smoking.transform(le_smoking.classes_).tolist()))
-alcohol_map = dict(zip(le_alcohol.classes_, le_alcohol.transform(le_alcohol.classes_).tolist()))
-married_map = dict(zip(le_married.classes_, le_married.transform(le_married.classes_).tolist()))
+# Drop rows where text or label is null / blank / whitespace-only
+before = len(df)
+df = df.dropna(subset=["text", "label"])
+df["text"]  = df["text"].astype(str).str.strip()
+df["label"] = df["label"].astype(str).str.strip()
+df = df[df["text"].str.len() > 5]          # discard near-empty cells
+df = df[df["label"].isin(["Safe Email", "Phishing Email"])]
+after = len(df)
+print(f"\n[3] After cleaning: {after:,} rows kept ({before - after:,} dropped)")
+print(f"    Label distribution:\n{df['label'].value_counts()}")
 
-# ──────────────────────────────────────────────
-# 5. One-hot encode exercise & profession
-# ──────────────────────────────────────────────
-exercise_dummies  = pd.get_dummies(df["exercise"],  prefix="exercise")
-profession_dummies = pd.get_dummies(df["profession"], prefix="profession")
-df = pd.concat([df, exercise_dummies, profession_dummies], axis=1)
 
-# ──────────────────────────────────────────────
-# 6. Age category & engineered feature
-# ──────────────────────────────────────────────
-bins   = [0, 30, 45, 60, df["age"].max() + 1]
-labels = ["Young", "Middle-Aged", "Senior", "Elderly"]
-df["age_category"] = pd.cut(df["age"], bins=bins, labels=labels, include_lowest=True)
+# ── 3. Text Preprocessing ──────────────────────────────────────────────────────
+def preprocess_text(text: str) -> str:
+    """
+    Lightweight but effective cleaning:
+    - lowercase
+    - strip URLs
+    - strip email addresses
+    - strip HTML tags
+    - remove punctuation & digits (keep alphabetical tokens)
+    - collapse whitespace
+    """
+    text = text.lower()
+    text = re.sub(r"http\S+|www\.\S+", " url ", text)          # URLs → token
+    text = re.sub(r"\S+@\S+", " email ", text)                  # addresses → token
+    text = re.sub(r"<[^>]+>", " ", text)                        # HTML tags
+    text = re.sub(r"[^a-z\s]", " ", text)                       # strip non-alpha
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
-df["bmi_sleep_interaction"] = df["bmi"] * df["sleep"]
 
-# ──────────────────────────────────────────────
-# 7. Build feature matrix (same order as notebook)
-# ──────────────────────────────────────────────
-drop_cols = ["smoking", "alcohol", "married", "exercise", "profession",
-             "sugar_intake", "age_category", "health_risk"]
-# Drop Cluster if it exists (it won't at this point, but guard anyway)
-if "Cluster" in df.columns:
-    drop_cols.append("Cluster")
+print("\n[4] Preprocessing email text …")
+df["clean_text"] = df["text"].apply(preprocess_text)
 
-df_ml = df.drop(columns=drop_cols)
-X = df_ml.copy()
+# Remove entries that collapse to empty strings after preprocessing
+df = df[df["clean_text"].str.len() > 0]
+print(f"    Done. {len(df):,} usable samples remain.")
 
-# Encode target
-le_risk = LabelEncoder()
-y = le_risk.fit_transform(df["health_risk"])
-print(f"Target mapping: {dict(zip(le_risk.classes_, le_risk.transform(le_risk.classes_).tolist()))}")
 
-# ──────────────────────────────────────────────
-# 8. Train / test split & scale
-# ──────────────────────────────────────────────
+# ── 4. Encode Labels ───────────────────────────────────────────────────────────
+label_map = {"Safe Email": 0, "Phishing Email": 1}
+df["y"] = df["label"].map(label_map)
+
+
+# ── 5. Train / Test Split ──────────────────────────────────────────────────────
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
+    df["clean_text"], df["y"],
+    test_size=0.2, random_state=42, stratify=df["y"]
 )
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled  = scaler.transform(X_test)
+print(f"\n[5] Train: {len(X_train):,} | Test: {len(X_test):,}")
 
-# ──────────────────────────────────────────────
-# 9. Train Random Forest (same params as notebook)
-# ──────────────────────────────────────────────
-rf_model = RandomForestClassifier(n_estimators=100, random_state=42, max_depth=5)
-rf_model.fit(X_train_scaled, y_train)
 
-y_pred = rf_model.predict(X_test_scaled)
-acc    = accuracy_score(y_test, y_pred)
-print(f"\nRandom Forest Test Accuracy: {acc*100:.2f}%")
+# ── 6. Build Pipeline (TF-IDF + Logistic Regression) ──────────────────────────
+pipeline = Pipeline([
+    ("tfidf", TfidfVectorizer(
+        max_features=40_000,
+        ngram_range=(1, 2),        # unigrams + bigrams
+        sublinear_tf=True,         # log-scaled TF
+        min_df=3,                  # ignore very rare terms
+        max_df=0.90,               # ignore very common terms
+        strip_accents="unicode",
+        analyzer="word",
+    )),
+    ("clf", LogisticRegression(
+        C=1.0,
+        solver="lbfgs",
+        max_iter=1000,
+        class_weight="balanced",   # handles any class imbalance
+        random_state=42,
+    )),
+])
+
+
+# ── 7. Fit ─────────────────────────────────────────────────────────────────────
+print("\n[6] Training TF-IDF + Logistic Regression …")
+pipeline.fit(X_train, y_train)
+
+
+# ── 8. Evaluate ────────────────────────────────────────────────────────────────
+y_pred  = pipeline.predict(X_test)
+y_proba = pipeline.predict_proba(X_test)[:, 1]
+
+acc     = accuracy_score(y_test, y_pred)
+auc     = roc_auc_score(y_test, y_proba)
+cm      = confusion_matrix(y_test, y_pred)
+
+print(f"\n[7] Test Accuracy : {acc * 100:.2f}%")
+print(f"    ROC-AUC Score  : {auc:.4f}")
 print("\nClassification Report:")
-print(classification_report(y_test, y_pred, target_names=le_risk.classes_))
+print(classification_report(y_test, y_pred, target_names=["Safe Email", "Phishing Email"]))
+print("Confusion Matrix:")
+print(f"  True Safe (TN) : {cm[0,0]:>6,}    False Phish (FP) : {cm[0,1]:>6,}")
+print(f"  False Safe (FN): {cm[1,0]:>6,}    True Phish  (TP) : {cm[1,1]:>6,}")
 
-# ──────────────────────────────────────────────
-# 10. Save artifacts
-# ──────────────────────────────────────────────
-joblib.dump(rf_model, os.path.join(MODEL_DIR, "rf_model.pkl"))
-joblib.dump(scaler,   os.path.join(MODEL_DIR, "scaler.pkl"))
-joblib.dump(list(X.columns), os.path.join(MODEL_DIR, "feature_columns.pkl"))
-joblib.dump(le_risk,  os.path.join(MODEL_DIR, "le_risk.pkl"))
 
-# Save category mappings for the front-end
-mappings = {
-    "smoking":    smoking_map,
-    "alcohol":    alcohol_map,
-    "married":    married_map,
-    "exercise_levels":  sorted(df["exercise"].unique().tolist()),
-    "profession_list":  sorted(df["profession"].unique().tolist()),
-    "exercise_columns":  sorted([c for c in X.columns if c.startswith("exercise_")]),
-    "profession_columns": sorted([c for c in X.columns if c.startswith("profession_")]),
+# ── 9. Save Artifacts ─────────────────────────────────────────────────────────
+joblib.dump(pipeline, os.path.join(MODEL_DIR, "phishing_pipeline.pkl"))
+
+metadata = {
+    "label_map":      label_map,
+    "inv_label_map":  {v: k for k, v in label_map.items()},
+    "accuracy":       round(acc * 100, 2),
+    "roc_auc":        round(auc, 4),
+    "train_samples":  int(len(X_train)),
+    "test_samples":   int(len(X_test)),
+    "total_samples":  int(len(df)),
+    "vocab_size":     int(pipeline.named_steps["tfidf"].max_features),
+    "ngram_range":    "(1, 2)",
+    "model":          "Logistic Regression",
+    "vectorizer":     "TF-IDF",
 }
-joblib.dump(mappings, os.path.join(MODEL_DIR, "mappings.pkl"))
+joblib.dump(metadata, os.path.join(MODEL_DIR, "metadata.pkl"))
 
-print("\nAll artifacts saved to /model/")
-print(f"Feature columns ({len(X.columns)}): {list(X.columns)}")
+print("\n[8] Artifacts saved to /model/")
+print("    ✓  phishing_pipeline.pkl")
+print("    ✓  metadata.pkl")
+print("\nTraining complete!")

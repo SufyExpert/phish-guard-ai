@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+
+# Editors
+.idea/
+.vscode/
+
+# Google OAuth Secrets
+credentials.json
+client_secret_*.json

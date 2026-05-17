@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>How It Works — PhishGuard AI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"/>
+  <script src="https://unpkg.com/feather-icons/dist/feather.min.js" defer></script>
+</head>
+<body class="intro-body">
+<div class="intro-container onboard-container">
+  <div class="intro-bg">
+    <div class="intro-bg__orb intro-bg__orb--1"></div>
+    <div class="intro-bg__orb intro-bg__orb--2"></div>
+    <div class="intro-grid"></div>
+  </div>
+  <div class="intro-logo">
+    <div class="intro-logo__icon"><i data-feather="shield" style="width:22px;height:22px;"></i></div>
+    <span class="intro-logo__text">PhishGuard <span>AI</span></span>
+  </div>
+  <div class="onboard-content">
+    <div class="onboard-icon onboard-icon--amber">
+      <i data-feather="cpu" style="width:36px;height:36px;"></i>
+    </div>
+    <h2 class="onboard-title">How Our AI Works</h2>
+    <p class="onboard-desc">A three-stage machine learning pipeline that analyses every email for phishing threats with precision.</p>
+    <div class="pipeline-steps">
+      <div class="pipeline-step">
+        <div class="pipeline-step__num">01</div>
+        <div class="pipeline-step__body">
+          <div class="pipeline-step__title">Email Text Input</div>
+          <div class="pipeline-step__desc">Raw email text is ingested and cleaned — URLs, HTML tags, and noise are stripped to preserve meaningful content.</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"><i data-feather="arrow-down" style="width:16px;height:16px;"></i></div>
+      <div class="pipeline-step">
+        <div class="pipeline-step__num">02</div>
+        <div class="pipeline-step__body">
+          <div class="pipeline-step__title">TF-IDF Vectorization</div>
+          <div class="pipeline-step__desc">Text is transformed into a 40,000-feature numerical matrix using TF-IDF with unigrams and bigrams to capture language patterns.</div>
+        </div>
+      </div>
+      <div class="pipeline-arrow"><i data-feather="arrow-down" style="width:16px;height:16px;"></i></div>
+      <div class="pipeline-step">
+        <div class="pipeline-step__num">03</div>
+        <div class="pipeline-step__body">
+          <div class="pipeline-step__title">Logistic Regression</div>
+          <div class="pipeline-step__desc">A trained classifier predicts phishing probability with 98.26% accuracy and generates a confidence score.</div>
+        </div>
+      </div>
+    </div>
+    <div class="onboard-nav">
+      <a href="{{ url_for('intro') }}" class="btn-onboard-back"><i data-feather="arrow-left" style="width:16px;height:16px;"></i> Back</a>
+      <a href="{{ url_for('onboard', step=2) }}" class="btn-onboard-next" id="btn-onboard-1-next">Next <i data-feather="arrow-right" style="width:16px;height:16px;"></i></a>
+    </div>
+  </div>
+  <div class="intro-steps">
+    <div class="intro-step intro-step--done"></div>
+    <div class="intro-step intro-step--active"></div>
+    <div class="intro-step"></div>
+    <div class="intro-step"></div>
+  </div>
+</div>
+<script>document.addEventListener('DOMContentLoaded',function(){if(typeof feather!=='undefined')feather.replace();});</script>
+</body>
+</html>
