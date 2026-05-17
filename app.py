@@ -555,11 +555,7 @@ def gmail_login():
         flow = load_gcp_flow(redirect_uri)
     except Exception as e:
         print("OAuth Flow Init Error:", e)
-        session["gmail_error"] = (
-            "Google OAuth credentials configuration is missing! To scan Gmail in the cloud, "
-            "you must copy the content of your local 'credentials.json' file and add it as an "
-            "Environment Variable on your Vercel Project named 'GCP_CREDENTIALS_JSON'."
-        )
+        session["gmail_error"] = f"OAuth initialization failed: {str(e)}"
         return redirect(url_for("gmail_integration"))
 
     authorization_url, state = flow.authorization_url(access_type="offline", include_granted_scopes="true")
