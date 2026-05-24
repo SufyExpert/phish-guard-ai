@@ -22,6 +22,63 @@ The application features a complete **Gmail Active Scanner** that queries your G
 * Clicking on any threat row in the scanner opens an elegant details popup modal featuring dynamic threat color matching, analyzed content formatting, and security details.
 * Features a direct inline shortcut button **"Open in Gmail"** that deep-links directly into your live Gmail web interface targeting the specific email message ID in a new browser tab (`https://mail.google.com/mail/u/0/#all/{message_id}`).
 
+## 🚀 Start Locally Before the Demo
+Before following the demo workflow, run the app locally and verify the browser is opened to the correct URL.
+
+1. Install dependencies if not already done:
+   ```bash
+   pip install flask scikit-learn pandas numpy matplotlib joblib google-auth-oauthlib google-api-python-client
+   ```
+2. Ensure `credentials.json` is present in the repository root and your Google OAuth settings are configured for `http://127.0.0.1:5001/gmail/callback`.
+3. Launch the local server:
+   ```bash
+   python app.py
+   ```
+4. Open the app in your browser:
+   ```text
+   http://127.0.0.1:5001
+   ```
+
+Once the app is running locally, continue with the workflow demo below.
+
+## 🎬 Working Demonstration Workflow
+This README is now structured as a live workflow demo that mirrors the actual product experience. All referenced screenshots live in the `screenshots/` folder and are embedded below for Markdown preview.
+
+1. **Launch & Onboarding**
+   * Start the app by running `python app.py` and open `http://127.0.0.1:5001`.
+   * The first interactive screen is shown below.
+
+   ![Onboarding walkthrough](screenshots/main.png)
+
+   * The initial onboarding overview is captured below.
+
+   ![Main dashboard](screenshots/onboarding_class.png)
+
+2. **Dashboard & Threat Overview**
+   * The main dashboard shows scanning status, model metrics, and summary risk indicators.
+
+   ![Dashboard view](screenshots/dashboard.png)
+
+3. **Real-Time Text Analyzer**
+   * Paste raw email content into the analyzer to get instant risk percentages and threat-level signal analysis.
+
+   ![Analyzer view](screenshots/analyze.png)
+
+4. **Gmail Active Scanner**
+   * Connect via OAuth, then scan your Gmail inbox with concurrent workers.
+   * Threat rows update live and popups display the risk details.
+
+   ![Gmail scanner view](screenshots/gmail_sec.png)
+
+5. **Settings & Simulation Controls**
+   * Adjust the model mode, review metadata, and customize the scanner experience.
+
+   ![Settings view](screenshots/settings.png)
+
+### Demo Notes
+* Use the onboarding flow, then open the dashboard and scanner to follow the exact user journey.
+* Every step in this documentation is supported by the current screenshot assets, so the README acts as a working demonstration guide.
+
 ### 🛡️ 4. Hybrid Security Rules Engine
 * Incorporates a dual-layer cybersecurity heuristics engine alongside the ML model.
 * Automatically whitelists and safe-checks legitimate notifications, monthly updates, and digests from verified senders (e.g. `@github.com`, `@google.com`, `@linkedin.com`) to **completely prevent false positives**.
