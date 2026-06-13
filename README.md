@@ -1,6 +1,6 @@
 # 🛡️ PhishGuard AI — Advanced Email Phishing Detection System
 
-PhishGuard AI is a state-of-the-art, machine-learning-powered web application that identifies email phishing attempts with **98.26% accuracy** and **0.9969 ROC-AUC**. Integrating advanced NLP (TF-IDF Vectorization) with a tuned Logistic Regression model, PhishGuard AI features a hybrid intelligence system: combining AI model predictions with a secure heuristics rules engine to completely eliminate false positives on newsletters, notifications, and monthly digests from trusted platforms (such as GitHub, Google, Slack, and Microsoft).
+PhishGuard AI is a state-of-the-art, machine-learning-powered web application that identifies email phishing attempts with **98.26% accuracy** and **0.9969 ROC-AUC**. Integrating advanced NLP (TF-IDF Vectorization) with a tuned Logistic Regression model, PhishGuard AI features a hybrid intelligence system: combining AI model predictions with a secure heuristics rules engine to completely eliminate false positives on newsletters, notifications, and monthly digests from trusted platforms (such as GitHub, Google, Slack, and  Microsoft).
 
 The application features a complete **Gmail Active Scanner** that queries your Gmail inbox concurrently via multi-threaded OAuth2 services, analyzes threats in real-time, displays interactive threat details in glassmorphic popups, and deep-links directly to individual emails in the live Google Gmail interface.
 
